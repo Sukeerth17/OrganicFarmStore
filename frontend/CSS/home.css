@@ -1,0 +1,222 @@
+/* HOME PAGE STYLES */
+
+/* Hero Section */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(rgba(13, 13, 13, 0.5), rgba(13, 13, 13, 0.7)),
+                url('https://images.unsplash.com/photo-1560493676-04071c5f467b?w=1920&h=1080&fit=crop&q=90');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, transparent 0%, rgba(13, 13, 13, 0.8) 100%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    padding: 0 20px;
+}
+
+.hero h1 {
+    font-size: 5rem;
+    color: #D4AF37;
+    margin-bottom: 25px;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.hero p {
+    font-size: 1.4rem;
+    color: #F5F5F5;
+    margin-bottom: 40px;
+    line-height: 1.8;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+}
+
+/* Features Section */
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    padding: 100px 6%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    background: linear-gradient(145deg, #1e1e1e 0%, #0d0d0d 100%);
+    border: 1px solid rgba(78, 52, 46, 0.5);
+    border-radius: 20px;
+    padding: 50px 35px;
+    text-align: center;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(244, 208, 63, 0.05));
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    border-color: #D4AF37;
+    box-shadow: 0 20px 60px rgba(212, 175, 55, 0.2);
+}
+
+.feature-icon {
+    font-size: 4rem;
+    margin-bottom: 25px;
+    display: block;
+}
+
+.feature-card h3 {
+    color: #D4AF37;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    font-family: 'Playfair Display', serif;
+}
+
+.feature-card p {
+    color: #F5F5F5;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    font-weight: 300;
+}
+
+/* Story Section */
+.story-section {
+    padding: 100px 6%;
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.story-section h2 {
+    color: #D4AF37;
+    font-size: 3rem;
+    margin-bottom: 30px;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 1px;
+}
+
+.story-section p {
+    color: #F5F5F5;
+    font-size: 1.15rem;
+    line-height: 1.9;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+}
+
+/* CTA Section */
+.cta-section {
+    padding: 100px 6%;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(78, 52, 46, 0.1), rgba(212, 175, 55, 0.05));
+    border-top: 1px solid rgba(78, 52, 46, 0.3);
+    border-bottom: 1px solid rgba(78, 52, 46, 0.3);
+}
+
+.cta-section h2 {
+    color: #D4AF37;
+    font-size: 3rem;
+    margin-bottom: 20px;
+    font-family: 'Playfair Display', serif;
+}
+
+.cta-section p {
+    color: #F5F5F5;
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    font-weight: 300;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .features {
+        grid-template-columns: 1fr;
+        gap: 30px;
+        padding: 80px 4%;
+    }
+    
+    .hero h1 {
+        font-size: 3.5rem;
+    }
+    
+    .story-section,
+    .cta-section {
+        padding: 80px 4%;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        background-attachment: scroll;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.1rem;
+    }
+    
+    .feature-card {
+        padding: 40px 25px;
+    }
+    
+    .story-section h2,
+    .cta-section h2 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .hero p {
+        font-size: 1rem;
+    }
+    
+    .feature-icon {
+        font-size: 3rem;
+    }
+    
+    .feature-card h3 {
+        font-size: 1.5rem;
+    }
+}

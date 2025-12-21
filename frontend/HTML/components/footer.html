@@ -1,0 +1,61 @@
+<footer class="main-footer">
+    <div class="footer-content">
+        <div class="footer-section">
+            <h3>🌿 Organic Farm</h3>
+            <p>Bringing fresh, organic produce from our farms to your table since 1995. Quality you can trust, freshness you can taste.</p>
+            <div class="social-links">
+                <a href="#" title="Facebook">📘</a>
+                <a href="#" title="Instagram">📷</a>
+                <a href="#" title="Twitter">🐦</a>
+                <a href="#" title="WhatsApp">💬</a>
+            </div>
+        </div>
+        
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <a href="index.html">Home</a>
+            <a href="products.html">Products</a>
+            <a href="about.html">About Us</a>
+            <a href="contact.html">Contact</a>
+            <a href="orders.html">My Orders</a>
+        </div>
+        
+        <div class="footer-section">
+            <h3>Contact Info</h3>
+            <p>📍 Bajpe Village, Mangalore<br>Karnataka 575014, India</p>
+            <p>📞 +91 98765 43210</p>
+            <p>✉️ hello@organicfarm.in</p>
+            <p>🕒 Mon-Sat: 8AM - 8PM</p>
+        </div>
+        
+        <div class="footer-section">
+            <h3>Newsletter</h3>
+            <p>Subscribe for fresh updates and exclusive offers!</p>
+            <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+                <input type="email" placeholder="Your email" required>
+                <button type="submit">Subscribe</button>
+            </form>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2025 Organic Farm Direct. All rights reserved.</p>
+        <p>Made with 🌱 in Mangalore | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </div>
+</footer>
+
+<script>
+function handleNewsletter(event) {
+    event.preventDefault();
+    const email = event.target.querySelector('input[type="email"]').value;
+    
+    if (window.utils) {
+        window.utils.showNotification('Thank you for subscribing! 🌿', 'success');
+        event.target.reset();
+    } else {
+        alert('Thank you for subscribing!');
+    }
+    
+    console.log('Newsletter subscription:', email);
+}
+</script>

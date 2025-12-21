@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors()); // Allow frontend to communicate with backend
@@ -255,6 +255,21 @@ app.get('/api/health', (req, res) => {
     });
 });
 
+// Root route
+app.get('/', (req, res) => {
+    res.json({
+        success: true,
+        message: 'Organic Farm Direct API',
+        endpoints: {
+            signup: 'POST /api/signup',
+            login: 'POST /api/login',
+            products: 'GET /api/products',
+            orders: 'POST /api/orders',
+            orderHistory: 'GET /api/orders/:phone'
+        }
+    });
+});
+
 // ========================================
 // ERROR HANDLING
 // ========================================
@@ -277,11 +292,12 @@ app.use((err, req, res, next) => {
 });
 
 // ========================================
-// START SERVER
+// START SERVER (Only if not in Vercel)
 // ========================================
 
-app.listen(PORT, () => {
-    console.log(`
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`
 ╔════════════════════════════════════════════╗
 ║                                            ║
 ║   🌿 ORGANIC FARM DIRECT - SERVER        ║
@@ -297,5 +313,9 @@ app.listen(PORT, () => {
 ║   • GET  /api/orders/:phone                ║
 ║                                            ║
 ╚════════════════════════════════════════════╝
-    `);
-});
+        `);
+    });
+}
+
+// Export for Vercel
+module.exports = app;

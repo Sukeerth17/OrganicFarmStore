@@ -1,6 +1,9 @@
-// SHARED UTILITY FUNCTIONS - Used across all pages
+// SHARED UTILITY FUNCTIONS - Works with both Local and Vercel
 
-const API_BASE_URL = 'http://localhost:3000/api';
+// Auto-detect API URL based on environment
+const API_BASE_URL = window.location.hostname === 'localhost' 
+    ? 'http://localhost:3000/api'  // Local development
+    : '/api';  // Production (Vercel)
 
 // ===================================
 // 1. TOAST NOTIFICATIONS
@@ -298,3 +301,8 @@ window.utils = {
     showLoader,
     hideLoader
 };
+
+// Log current environment
+console.log('🌿 Organic Farm Direct');
+console.log('API URL:', API_BASE_URL);
+console.log('Environment:', window.location.hostname === 'localhost' ? 'Development' : 'Production');

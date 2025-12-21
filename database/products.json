@@ -4,7 +4,7 @@
     "name": "Premium Alphonso Mango",
     "price": 450,
     "unit": "kg",
-    "image": "https://images.unsplash.com/photo-1605027990121-cbae9666324a?w=800&h=800&fit=crop&q=90",
+    "image": "https://media.licdn.com/dms/image/v2/D5622AQFKMBvSqh_rbA/feedshare-shrink_800/feedshare-shrink_800/0/1724244002416?e=2147483647&v=beta&t=V_bt7AEkpAJi8zQffPjC_cZuRVej7hqZmcBjKQJfo-0",
     "category": "Fruits"
   },
   {
@@ -12,7 +12,7 @@
     "name": "Organic Red Apples",
     "price": 250,
     "unit": "kg",
-    "image": "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=800&h=800&fit=crop&q=90",
+    "image": "https://i.pinimg.com/736x/68/46/70/684670e508cb9ac6c402edacb9f2fb48.jpg",
     "category": "Fruits"
   },
   {
@@ -20,7 +20,7 @@
     "name": "Fresh Green Grapes",
     "price": 180,
     "unit": "kg",
-    "image": "https://images.unsplash.com/photo-1596363505729-4190a9506133?w=800&h=800&fit=crop&q=90",
+    "image": "https://i.pinimg.com/1200x/47/ea/3b/47ea3bf2b1e971ad7e784f3fd1253db8.jpg",
     "category": "Fruits"
   },
   {
@@ -36,7 +36,7 @@
     "name": "Farm Fresh Tomatoes",
     "price": 80,
     "unit": "kg",
-    "image": "https://images.unsplash.com/photo-1546470427-e26264f375a5?w=800&h=800&fit=crop&q=90",
+    "image": "https://i.pinimg.com/736x/df/58/c4/df58c4142e111d5ca439206447c5b0d4.jpg",
     "category": "Vegetables"
   },
   {
@@ -76,7 +76,7 @@
     "name": "Fresh Bell Peppers",
     "price": 90,
     "unit": "kg",
-    "image": "https://images.unsplash.com/photo-1525607551316-4a8e16d1f9ba?w=800&h=800&fit=crop&q=90",
+    "image": "https://i.pinimg.com/1200x/c4/89/d7/c489d7627b31f4c386c4803a3da262f7.jpg",
     "category": "Vegetables"
   },
   {
@@ -92,7 +92,7 @@
     "name": "Sweet Watermelon",
     "price": 70,
     "unit": "kg",
-    "image": "https://images.unsplash.com/photo-1582735689780-d58a36d05d0f?w=800&h=800&fit=crop&q=90",
+    "image": "https://i.pinimg.com/1200x/1d/01/ae/1d01aeebde458c69892b9aaa73690adc.jpg",
     "category": "Fruits"
   }
 ]

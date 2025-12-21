@@ -1,0 +1,43 @@
+{
+  "version": 2,
+  "name": "organic-farm-direct",
+  "builds": [
+    {
+      "src": "backend/server.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "frontend/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "backend/server.js"
+    },
+    {
+      "src": "/HTML/(.*)",
+      "dest": "frontend/HTML/$1"
+    },
+    {
+      "src": "/CSS/(.*)",
+      "dest": "frontend/CSS/$1"
+    },
+    {
+      "src": "/JSS/(.*)",
+      "dest": "frontend/JSS/$1"
+    },
+    {
+      "src": "/",
+      "dest": "frontend/HTML/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend/HTML/$1"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}
