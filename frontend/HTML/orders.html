@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | Organic Farm Direct</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="../CSS/components/header.css">
+    <link rel="stylesheet" href="../CSS/components/footer.css">
+    <link rel="stylesheet" href="../CSS/orders.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="orders-main">
+        <h1 class="page-title">My Orders</h1>
+        <p class="page-subtitle">Track your organic deliveries</p>
+
+        <div class="orders-container">
+            <div id="orders-list">
+                <!-- Orders loaded by JavaScript -->
+                <div class="spinner"></div>
+            </div>
+            
+            <div id="no-orders" class="no-orders" style="display: none;">
+                <div class="empty-icon">📦</div>
+                <h2>No Orders Yet</h2>
+                <p>Start shopping for fresh organic produce!</p>
+                <a href="products.html" class="btn-gold">Browse Products</a>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../JSS/components/header.js"></script>
+    <script src="../JSS/utils.js"></script>
+    <script src="../JSS/orders.js"></script>
+</body>
+</html>

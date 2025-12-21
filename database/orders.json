@@ -1,0 +1,27 @@
+[
+  {
+    "phone": "9876543210",
+    "orders": [
+      {
+        "orderId": "ORD001",
+        "date": "2025-01-15",
+        "items": [
+          {
+            "id": 1,
+            "name": "Premium Alphonso Mango",
+            "price": 450,
+            "quantity": 2
+          },
+          {
+            "id": 2,
+            "name": "Organic Red Apples",
+            "price": 250,
+            "quantity": 1
+          }
+        ],
+        "amount": 1150,
+        "status": "Delivered"
+      }
+    ]
+  }
+]

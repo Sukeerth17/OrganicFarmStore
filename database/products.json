@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "name": "Premium Alphonso Mango",
+    "price": 450,
+    "unit": "kg",
+    "image": "https://images.unsplash.com/photo-1605027990121-cbae9666324a?w=800&h=800&fit=crop&q=90",
+    "category": "Fruits"
+  },
+  {
+    "id": 2,
+    "name": "Organic Red Apples",
+    "price": 250,
+    "unit": "kg",
+    "image": "https://images.unsplash.com/photo-1568702846914-96b305d2aaeb?w=800&h=800&fit=crop&q=90",
+    "category": "Fruits"
+  },
+  {
+    "id": 3,
+    "name": "Fresh Green Grapes",
+    "price": 180,
+    "unit": "kg",
+    "image": "https://images.unsplash.com/photo-1596363505729-4190a9506133?w=800&h=800&fit=crop&q=90",
+    "category": "Fruits"
+  },
+  {
+    "id": 4,
+    "name": "Sweet Strawberries",
+    "price": 320,
+    "unit": "kg",
+    "image": "https://images.unsplash.com/photo-1543528176-61b239494933?w=800&h=800&fit=crop&q=90",
+    "category": "Fruits"
+  },
+  {
+    "id": 5,
+    "name": "Farm Fresh Tomatoes",
+    "price": 80,
+    "unit": "kg",
+    "image": "https://images.unsplash.com/photo-1546470427-e26264f375a5?w=800&h=800&fit=crop&q=90",
+    "category": "Vegetables"
+  },
+  {
+    "id": 6,
+    "name": "Organic Carrots",
+    "price": 60,
+    "unit": "kg",
+    "image": "https://images.unsplash.com/photo-1582515073490-39981397c445?w=800&h=800&fit=crop&q=90",
+    "category": "Vegetables"
+  },
+  {
+    "id": 7,
+    "name": "Fresh Spinach Bunch",
+    "price": 40,
+    "unit": "bunch",
+    "image": "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=800&h=800&fit=crop&q=90",
+    "category": "Vegetables"
+  },
+  {
+    "id": 8,
+    "name": "Ripe Bananas",
+    "price": 50,
+    "unit": "dozen",
+    "image": "https://images.unsplash.com/photo-1603833665858-e61d17a86224?w=800&h=800&fit=crop&q=90",
+    "category": "Fruits"
+  },
+  {
+    "id": 9,
+    "name": "Sweet Oranges",
+    "price": 120,
+    "unit": "kg",
+    "image": "https://images.unsplash.com/photo-1582979512210-99b6a53386f9?w=800&h=800&fit=crop&q=90",
+    "category": "Fruits"
+  },
+  {
+    "id": 10,
+    "name": "Fresh Bell Peppers",
+    "price": 90,
+    "unit": "kg",
+    "image": "https://images.unsplash.com/photo-1525607551316-4a8e16d1f9ba?w=800&h=800&fit=crop&q=90",
+    "category": "Vegetables"
+  },
+  {
+    "id": 11,
+    "name": "Organic Broccoli",
+    "price": 100,
+    "unit": "kg",
+    "image": "https://images.unsplash.com/photo-1583663848850-46af132dc08e?w=800&h=800&fit=crop&q=90",
+    "category": "Vegetables"
+  },
+  {
+    "id": 12,
+    "name": "Sweet Watermelon",
+    "price": 70,
+    "unit": "kg",
+    "image": "https://images.unsplash.com/photo-1582735689780-d58a36d05d0f?w=800&h=800&fit=crop&q=90",
+    "category": "Fruits"
+  }
+]

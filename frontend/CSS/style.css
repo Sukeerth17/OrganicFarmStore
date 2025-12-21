@@ -1,0 +1,233 @@
+/* GLOBAL STYLES - Used across all pages */
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* CSS Variables */
+:root {
+    --luxury-brown: #4E342E;
+    --royal-black: #0D0D0D;
+    --gold-accent: #D4AF37;
+    --gold-light: #F4D03F;
+    --off-white: #F5F5F5;
+    --dark-grey: #1a1a1a;
+    --glass: rgba(255, 255, 255, 0.1);
+}
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--royal-black);
+    color: var(--off-white);
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+/* Reusable Button Styles */
+.btn-gold {
+    background: linear-gradient(135deg, var(--gold-accent) 0%, var(--gold-light) 100%);
+    color: var(--royal-black);
+    padding: 14px 35px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 50px;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.4s ease;
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.3);
+    letter-spacing: 0.5px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.btn-gold:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(212, 175, 55, 0.5);
+}
+
+.btn-gold:active {
+    transform: translateY(-1px);
+}
+
+.btn-dark {
+    background: var(--royal-black);
+    color: var(--gold-accent);
+    padding: 14px 35px;
+    border: 2px solid var(--royal-black);
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 50px;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.4s ease;
+}
+
+.btn-dark:hover {
+    background: transparent;
+    color: var(--royal-black);
+}
+
+.btn-outline {
+    background: transparent;
+    color: var(--gold-accent);
+    padding: 12px 30px;
+    border: 2px solid var(--gold-accent);
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 50px;
+    font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.4s ease;
+}
+
+.btn-outline:hover {
+    background: var(--gold-accent);
+    color: var(--royal-black);
+}
+
+/* Glass Card Effect */
+.glass-card {
+    background: var(--glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+    transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+    border-color: var(--gold-accent);
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(212, 175, 55, 0.2);
+}
+
+/* Container */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Utility Classes */
+.text-center {
+    text-align: center;
+}
+
+.mt-20 { margin-top: 20px; }
+.mt-40 { margin-top: 40px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-40 { margin-bottom: 40px; }
+
+/* Page Titles */
+.page-title {
+    text-align: center;
+    color: var(--gold-accent);
+    font-size: 3rem;
+    margin-bottom: 10px;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 1px;
+}
+
+.page-subtitle {
+    text-align: center;
+    color: var(--off-white);
+    font-size: 1.1rem;
+    margin-bottom: 50px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+}
+
+/* Smooth Scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Selection Color */
+::selection {
+    background: var(--gold-accent);
+    color: var(--royal-black);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--royal-black);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gold-accent);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gold-light);
+}
+
+/* Loading Spinner */
+.spinner {
+    border: 4px solid rgba(212, 175, 55, 0.3);
+    border-top: 4px solid var(--gold-accent);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Fade In Animation */
+.fade-in {
+    animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 2.2rem;
+    }
+    
+    .page-subtitle {
+        font-size: 1rem;
+    }
+    
+    .btn-gold,
+    .btn-dark,
+    .btn-outline {
+        padding: 12px 25px;
+        font-size: 0.95rem;
+    }
+}

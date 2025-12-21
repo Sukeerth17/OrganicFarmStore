@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Organic Farm Direct</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="../CSS/components/header.css">
+    <link rel="stylesheet" href="../CSS/components/footer.css">
+    <link rel="stylesheet" href="../CSS/checkout.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="checkout-main">
+        <h1 class="page-title">Checkout</h1>
+        <p class="page-subtitle">Complete your order</p>
+
+        <div class="checkout-container">
+            <!-- Order Summary -->
+            <div class="order-summary-section">
+                <h2>Order Summary</h2>
+                <div id="order-items"></div>
+                
+                <div class="summary-totals">
+                    <div class="summary-row">
+                        <span>Subtotal:</span>
+                        <span id="checkout-subtotal">₹0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery:</span>
+                        <span id="checkout-delivery">₹50</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Discount:</span>
+                        <span id="checkout-discount" style="color: #4ade80;">-₹0</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row total">
+                        <span>Total:</span>
+                        <span id="checkout-total">₹0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Options -->
+            <div class="payment-section">
+                <h2>Payment Method</h2>
+                
+                <div class="payment-options">
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="cod" checked>
+                        <div class="option-content">
+                            <span class="option-icon">💵</span>
+                            <div>
+                                <h3>Cash on Delivery</h3>
+                                <p>Pay when you receive your order</p>
+                            </div>
+                        </div>
+                    </label>
+                    
+                    <label class="payment-option">
+                        <input type="radio" name="payment" value="upi">
+                        <div class="option-content">
+                            <span class="option-icon">📱</span>
+                            <div>
+                                <h3>UPI Payment</h3>
+                                <p>Scan QR code to pay instantly</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- UPI QR Code (Hidden by default) -->
+                <div id="upi-qr-section" style="display: none;">
+                    <div class="qr-container">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=organicfarm@upi&pn=OrganicFarm&am=1000" 
+                             alt="UPI QR Code" class="qr-image">
+                        <p>Scan to pay ₹<span id="qr-amount">0</span></p>
+                    </div>
+                </div>
+
+                <button class="btn-gold place-order-btn" onclick="placeOrder()">
+                    Place Order
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../JSS/components/header.js"></script>
+    <script src="../JSS/utils.js"></script>
+    <script src="../JSS/checkout.js"></script>
+</body>
+</html>

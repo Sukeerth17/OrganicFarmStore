@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Organic Farm Direct</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="../CSS/components/header.css">
+    <link rel="stylesheet" href="../CSS/components/footer.css">
+    <link rel="stylesheet" href="../CSS/signin.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="auth-main">
+        <div class="auth-card">
+            <h2>Create Account</h2>
+            <p class="subtitle">Join our organic family today</p>
+            
+            <form id="signup-form" onsubmit="handleSignUp(event)">
+                <input type="text" id="name" placeholder="Full Name" required>
+                <input type="tel" id="phone" placeholder="Phone Number (10 digits)" required maxlength="10">
+                <input type="password" id="password" placeholder="Create Password (min 6 chars)" required>
+                <button type="submit" class="btn-gold">Sign Up</button>
+            </form>
+            
+            <p class="toggle-text">
+                Already have an account? 
+                <a href="signin.html">Sign In</a>
+            </p>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../JSS/components/header.js"></script>
+    <script src="../JSS/utils.js"></script>
+    <script src="../JSS/signup.js"></script>
+</body>
+</html>

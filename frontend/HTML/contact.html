@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Organic Farm Direct</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="../CSS/components/header.css">
+    <link rel="stylesheet" href="../CSS/components/footer.css">
+    <link rel="stylesheet" href="../CSS/contact.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="contact-main">
+        <h1 class="page-title">Get In Touch</h1>
+        <p class="page-subtitle">We'd love to hear from you</p>
+
+        <div class="contact-container">
+            <!-- Contact Info -->
+            <div class="contact-info">
+                <h2>Contact Information</h2>
+                
+                <div class="info-item">
+                    <span class="info-icon">📍</span>
+                    <div>
+                        <h3>Address</h3>
+                        <p>Organic Farm Direct<br>
+                        Bajpe Village, Mangalore<br>
+                        Karnataka 575014, India</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-icon">📞</span>
+                    <div>
+                        <h3>Phone</h3>
+                        <p>+91 98765 43210<br>
+                        +91 98765 43211</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-icon">✉️</span>
+                    <div>
+                        <h3>Email</h3>
+                        <p>hello@organicfarm.in<br>
+                        support@organicfarm.in</p>
+                    </div>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-icon">🕒</span>
+                    <div>
+                        <h3>Hours</h3>
+                        <p>Monday - Saturday<br>
+                        8:00 AM - 8:00 PM<br>
+                        Sunday: Closed</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="contact-form-section">
+                <h2>Send Us a Message</h2>
+                <form id="contact-form" onsubmit="handleContactForm(event)">
+                    <input type="text" id="name" placeholder="Your Name" required>
+                    <input type="email" id="email" placeholder="Your Email" required>
+                    <input type="tel" id="phone" placeholder="Your Phone (optional)">
+                    <textarea id="message" rows="6" placeholder="Your Message" required></textarea>
+                    <button type="submit" class="btn-gold">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../JSS/components/header.js"></script>
+    <script src="../JSS/utils.js"></script>
+    <script src="../JSS/contact.js"></script>
+</body>
+</html>
