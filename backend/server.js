@@ -17,16 +17,18 @@ const PORT = process.env.PORT || 3000;
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: process.env.NODE_ENV === 'production' ? {
-        rejectUnauthorized: false
+        rejectUnauthorized: false  // Required for Render
     } : false
 });
 
 // Test database connection
 pool.query('SELECT NOW()', (err, res) => {
     if (err) {
-        console.error('❌ Database connection failed:', err);
+        console.error('❌ Database connection failed:', err.message);
+        console.error('DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
     } else {
         console.log('✅ Database connected successfully!');
+        console.log('Database time:', res.rows[0].now);
     }
 });
 
