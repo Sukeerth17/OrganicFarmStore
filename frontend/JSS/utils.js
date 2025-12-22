@@ -1,17 +1,22 @@
-// SHARED UTILITY FUNCTIONS - Works with both Local and Vercel
+// SHARED UTILITY FUNCTIONS - Works with Render Backend
 
-// Auto-detect API URL based on environment.
-// Make detection more robust: handle localhost, 127.0.0.1 and file:// (when opened directly).
+// ===================================
+// API CONFIGURATION
+// ===================================
 const hostname = window.location.hostname;
 const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || window.location.protocol === 'file:';
-const API_BASE_URL = isLocalhost ? 'http://localhost:3000/api' : '/api';
+
+// 🔴 IMPORTANT: Replace 'YOUR-BACKEND-URL' with your actual Render backend URL
+// Example: 'https://organic-farm-api-abc123.onrender.com/api'
+const RENDER_API_URL = 'https://YOUR-BACKEND-URL.onrender.com/api';
+
+const API_BASE_URL = isLocalhost ? 'http://localhost:3000/api' : RENDER_API_URL;
 
 // ===================================
 // 1. TOAST NOTIFICATIONS
 // ===================================
 
 function showNotification(message, type = 'success') {
-    // Remove existing notifications
     const existing = document.querySelector('.toast-notification');
     if (existing) existing.remove();
 
@@ -151,7 +156,7 @@ function requireLogin() {
 }
 
 // ===================================
-// 4. API CALLS
+// 4. API CALLS - FIXED ERROR HANDLING
 // ===================================
 
 async function apiCall(endpoint, method = 'GET', data = null) {
@@ -167,39 +172,44 @@ async function apiCall(endpoint, method = 'GET', data = null) {
             options.body = JSON.stringify(data);
         }
 
+        console.log(`API Call: ${method} ${API_BASE_URL}${endpoint}`);
+        
         const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
 
-        // Read as text first so we can handle non-JSON error responses gracefully
+        // Read response as text first
         const text = await response.text();
-
-        // Try to parse JSON if content exists
+        
+        // Try to parse JSON
         let result = null;
         if (text) {
             try {
                 result = JSON.parse(text);
             } catch (parseErr) {
-                // Parsing failed — provide a clearer error message including the raw response
-                const msg = `Invalid JSON response from server: ${parseErr.message}`;
-                console.error(msg, 'responseText=', text);
-                throw new Error(msg);
+                console.error('Failed to parse JSON:', text);
+                throw new Error(`Server returned invalid JSON: ${parseErr.message}`);
             }
         }
 
-        // If server returned a non-2xx status and didn't provide a JSON body
+        // Handle HTTP errors
         if (!response.ok) {
-            const serverMessage = result && result.message ? result.message : `HTTP ${response.status} ${response.statusText}`;
-            throw new Error(serverMessage);
+            const errorMessage = result?.message || `HTTP ${response.status}: ${response.statusText}`;
+            throw new Error(errorMessage);
         }
 
-        // If result exists and indicates failure, bubble up its message
+        // Handle API-level errors
         if (result && result.success === false) {
             throw new Error(result.message || 'API request failed');
         }
 
-        // Return parsed JSON when available, otherwise null (for endpoints that return no body)
         return result;
     } catch (error) {
         console.error('API Error:', error);
+        
+        // User-friendly error messages
+        if (error.message.includes('fetch')) {
+            throw new Error('Unable to connect to server. Please check your internet connection.');
+        }
+        
         throw error;
     }
 }
@@ -326,7 +336,15 @@ window.utils = {
     hideLoader
 };
 
-// Log current environment
+// Log current configuration
 console.log('🌿 Organic Farm Direct');
+console.log('Environment:', isLocalhost ? 'Development (localhost)' : 'Production');
 console.log('API URL:', API_BASE_URL);
-console.log('Environment:', window.location.hostname === 'localhost' ? 'Development' : 'Production');
+console.log('Backend Status: Testing connection...');
+
+// Test backend connection on page load
+if (!isLocalhost) {
+    apiCall('/health')
+        .then(() => console.log('✅ Backend connection successful'))
+        .catch(err => console.error('❌ Backend connection failed:', err.message));
+}
