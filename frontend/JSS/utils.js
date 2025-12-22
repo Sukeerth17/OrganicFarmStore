@@ -1,9 +1,10 @@
 // SHARED UTILITY FUNCTIONS - Works with both Local and Vercel
 
-// Auto-detect API URL based on environment
-const API_BASE_URL = window.location.hostname === 'localhost' 
-    ? 'http://localhost:3000/api'  // Local development
-    : '/api';  // Production (Vercel)
+// Auto-detect API URL based on environment.
+// Make detection more robust: handle localhost, 127.0.0.1 and file:// (when opened directly).
+const hostname = window.location.hostname;
+const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || window.location.protocol === 'file:';
+const API_BASE_URL = isLocalhost ? 'http://localhost:3000/api' : '/api';
 
 // ===================================
 // 1. TOAST NOTIFICATIONS
@@ -167,12 +168,35 @@ async function apiCall(endpoint, method = 'GET', data = null) {
         }
 
         const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
-        const result = await response.json();
 
-        if (!result.success) {
+        // Read as text first so we can handle non-JSON error responses gracefully
+        const text = await response.text();
+
+        // Try to parse JSON if content exists
+        let result = null;
+        if (text) {
+            try {
+                result = JSON.parse(text);
+            } catch (parseErr) {
+                // Parsing failed — provide a clearer error message including the raw response
+                const msg = `Invalid JSON response from server: ${parseErr.message}`;
+                console.error(msg, 'responseText=', text);
+                throw new Error(msg);
+            }
+        }
+
+        // If server returned a non-2xx status and didn't provide a JSON body
+        if (!response.ok) {
+            const serverMessage = result && result.message ? result.message : `HTTP ${response.status} ${response.statusText}`;
+            throw new Error(serverMessage);
+        }
+
+        // If result exists and indicates failure, bubble up its message
+        if (result && result.success === false) {
             throw new Error(result.message || 'API request failed');
         }
 
+        // Return parsed JSON when available, otherwise null (for endpoints that return no body)
         return result;
     } catch (error) {
         console.error('API Error:', error);

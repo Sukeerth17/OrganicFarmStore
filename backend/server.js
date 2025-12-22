@@ -1,258 +1,390 @@
+// ===================================
+// ORGANIC FARM DIRECT - PostgreSQL Backend
+// ===================================
+
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
+const { Pool } = require('pg');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors()); // Allow frontend to communicate with backend
-app.use(express.json()); // Parse JSON request bodies
+// ===================================
+// DATABASE CONNECTION
+// ===================================
 
-// Database file paths
-const usersFile = path.join(__dirname, '../database/users.json');
-const ordersFile = path.join(__dirname, '../database/orders.json');
-const productsFile = path.join(__dirname, '../database/products.json');
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.NODE_ENV === 'production' ? {
+        rejectUnauthorized: false
+    } : false
+});
 
-// Helper function to read JSON files
-function readJSON(filePath) {
-    try {
-        const data = fs.readFileSync(filePath, 'utf8');
-        return JSON.parse(data);
-    } catch (error) {
-        console.error(`Error reading ${filePath}:`, error);
-        return [];
+// Test database connection
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+        console.error('❌ Database connection failed:', err);
+    } else {
+        console.log('✅ Database connected successfully!');
     }
-}
+});
 
-// Helper function to write JSON files
-function writeJSON(filePath, data) {
-    try {
-        fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
-        return true;
-    } catch (error) {
-        console.error(`Error writing ${filePath}:`, error);
-        return false;
-    }
-}
+// ===================================
+// MIDDLEWARE
+// ===================================
 
-// ========================================
+app.use(cors());
+app.use(express.json());
+
+// Request logging
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.path}`);
+    next();
+});
+
+// ===================================
 // AUTHENTICATION ROUTES
-// ========================================
+// ===================================
 
-// 1. SIGN UP - Create new user account
-app.post('/api/signup', (req, res) => {
+// 1. SIGN UP
+app.post('/api/signup', async (req, res) => {
     const { name, phone, password } = req.body;
 
     // Validation
     if (!name || !phone || !password) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'All fields are required' 
+        return res.status(400).json({
+            success: false,
+            message: 'All fields are required'
         });
     }
 
-    // Validate phone number (10 digits)
     if (!/^[6-9]\d{9}$/.test(phone)) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Invalid phone number. Must be 10 digits starting with 6-9' 
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid phone number'
         });
     }
 
-    // Validate password length
     if (password.length < 6) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Password must be at least 6 characters' 
+        return res.status(400).json({
+            success: false,
+            message: 'Password must be at least 6 characters'
         });
     }
 
-    const users = readJSON(usersFile);
+    try {
+        // Check if user exists
+        const checkUser = await pool.query(
+            'SELECT phone FROM users WHERE phone = $1',
+            [phone]
+        );
 
-    // Check if user already exists
-    const existingUser = users.find(u => u.phone === phone);
-    if (existingUser) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'User with this phone number already exists' 
-        });
-    }
+        if (checkUser.rows.length > 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'User with this phone number already exists'
+            });
+        }
 
-    // Create new user
-    const newUser = { name, phone, password }; // In production, hash the password!
-    users.push(newUser);
+        // Insert new user
+        await pool.query(
+            'INSERT INTO users (name, phone, password) VALUES ($1, $2, $3)',
+            [name, phone, password]
+        );
 
-    // Save to database
-    if (writeJSON(usersFile, users)) {
-        res.status(201).json({ 
-            success: true, 
+        res.status(201).json({
+            success: true,
             message: 'Account created successfully!',
             user: { name, phone }
         });
-    } else {
-        res.status(500).json({ 
-            success: false, 
-            message: 'Failed to create account. Please try again.' 
+
+    } catch (error) {
+        console.error('Signup error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to create account'
         });
     }
 });
 
-// 2. SIGN IN - User login
-app.post('/api/login', (req, res) => {
+// 2. SIGN IN
+app.post('/api/login', async (req, res) => {
     const { phone, password } = req.body;
 
-    // Validation
     if (!phone || !password) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Phone and password are required' 
+        return res.status(400).json({
+            success: false,
+            message: 'Phone and password are required'
         });
     }
 
-    const users = readJSON(usersFile);
+    try {
+        const result = await pool.query(
+            'SELECT name, phone FROM users WHERE phone = $1 AND password = $2',
+            [phone, password]
+        );
 
-    // Find user
-    const user = users.find(u => u.phone === phone && u.password === password);
+        if (result.rows.length === 0) {
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid phone number or password'
+            });
+        }
 
-    if (user) {
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             message: 'Login successful!',
-            user: { name: user.name, phone: user.phone }
+            user: result.rows[0]
         });
-    } else {
-        res.status(401).json({ 
-            success: false, 
-            message: 'Invalid phone number or password' 
+
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Login failed'
         });
     }
 });
 
-// ========================================
+// ===================================
 // PRODUCT ROUTES
-// ========================================
+// ===================================
 
 // 3. GET ALL PRODUCTS
-app.get('/api/products', (req, res) => {
-    const products = readJSON(productsFile);
-    res.json({ 
-        success: true, 
-        products 
-    });
+app.get('/api/products', async (req, res) => {
+    try {
+        const result = await pool.query(
+            'SELECT * FROM products ORDER BY id ASC'
+        );
+
+        res.json({
+            success: true,
+            products: result.rows
+        });
+
+    } catch (error) {
+        console.error('Get products error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch products'
+        });
+    }
 });
 
 // 4. GET SINGLE PRODUCT
-app.get('/api/products/:id', (req, res) => {
-    const products = readJSON(productsFile);
-    const product = products.find(p => p.id === parseInt(req.params.id));
+app.get('/api/products/:id', async (req, res) => {
+    const { id } = req.params;
 
-    if (product) {
-        res.json({ 
-            success: true, 
-            product 
+    try {
+        const result = await pool.query(
+            'SELECT * FROM products WHERE id = $1',
+            [id]
+        );
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
+        res.json({
+            success: true,
+            product: result.rows[0]
         });
-    } else {
-        res.status(404).json({ 
-            success: false, 
-            message: 'Product not found' 
+
+    } catch (error) {
+        console.error('Get product error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch product'
         });
     }
 });
 
-// ========================================
+// ===================================
 // ORDER ROUTES
-// ========================================
+// ===================================
 
 // 5. PLACE NEW ORDER
-app.post('/api/orders', (req, res) => {
+app.post('/api/orders', async (req, res) => {
     const { phone, items, amount } = req.body;
 
     // Validation
     if (!phone || !items || !amount) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Phone, items, and amount are required' 
+        return res.status(400).json({
+            success: false,
+            message: 'Phone, items, and amount are required'
         });
     }
 
     if (!Array.isArray(items) || items.length === 0) {
-        return res.status(400).json({ 
-            success: false, 
-            message: 'Cart is empty' 
+        return res.status(400).json({
+            success: false,
+            message: 'Cart is empty'
         });
     }
 
-    const allOrders = readJSON(ordersFile);
+    const client = await pool.connect();
 
-    // Create new order
-    const newOrder = {
-        orderId: 'ORD' + Date.now(),
-        date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
-        items: items,
-        amount: amount,
-        status: 'Processing'
-    };
+    try {
+        await client.query('BEGIN');
 
-    // Find user's order history or create new
-    let userOrders = allOrders.find(o => o.phone === phone);
+        // Generate order ID
+        const orderId = 'ORD' + Date.now();
 
-    if (userOrders) {
-        userOrders.orders.push(newOrder);
-    } else {
-        allOrders.push({
-            phone: phone,
-            orders: [newOrder]
-        });
-    }
+        // Insert order
+        await client.query(
+            `INSERT INTO orders (order_id, user_phone, total_amount, status) 
+             VALUES ($1, $2, $3, $4)`,
+            [orderId, phone, amount, 'Processing']
+        );
 
-    // Save to database
-    if (writeJSON(ordersFile, allOrders)) {
-        res.status(201).json({ 
-            success: true, 
+        // Insert order items
+        for (const item of items) {
+            await client.query(
+                `INSERT INTO order_items 
+                 (order_id, product_id, product_name, price, quantity) 
+                 VALUES ($1, $2, $3, $4, $5)`,
+                [orderId, item.id, item.name, item.price, item.quantity]
+            );
+        }
+
+        await client.query('COMMIT');
+
+        res.status(201).json({
+            success: true,
             message: 'Order placed successfully!',
-            orderId: newOrder.orderId
+            orderId: orderId
         });
-    } else {
-        res.status(500).json({ 
-            success: false, 
-            message: 'Failed to place order. Please try again.' 
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Place order error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to place order'
         });
+    } finally {
+        client.release();
     }
 });
 
 // 6. GET USER'S ORDER HISTORY
-app.get('/api/orders/:phone', (req, res) => {
+app.get('/api/orders/:phone', async (req, res) => {
     const { phone } = req.params;
 
-    const allOrders = readJSON(ordersFile);
-    const userOrders = allOrders.find(o => o.phone === phone);
+    try {
+        // Get all orders for user
+        const ordersResult = await pool.query(
+            `SELECT order_id, total_amount, status, 
+                    TO_CHAR(created_at, 'YYYY-MM-DD') as date
+             FROM orders 
+             WHERE user_phone = $1 
+             ORDER BY created_at DESC`,
+            [phone]
+        );
 
-    if (userOrders && userOrders.orders.length > 0) {
-        res.json({ 
-            success: true, 
-            orders: userOrders.orders 
+        if (ordersResult.rows.length === 0) {
+            return res.json({
+                success: true,
+                orders: []
+            });
+        }
+
+        // Get items for each order
+        const ordersWithItems = await Promise.all(
+            ordersResult.rows.map(async (order) => {
+                const itemsResult = await pool.query(
+                    `SELECT product_id as id, product_name as name, 
+                            price, quantity
+                     FROM order_items 
+                     WHERE order_id = $1`,
+                    [order.order_id]
+                );
+
+                return {
+                    orderId: order.order_id,
+                    date: order.date,
+                    items: itemsResult.rows,
+                    amount: order.total_amount,
+                    status: order.status
+                };
+            })
+        );
+
+        res.json({
+            success: true,
+            orders: ordersWithItems
         });
-    } else {
-        res.json({ 
-            success: true, 
-            orders: [],
-            message: 'No orders found' 
+
+    } catch (error) {
+        console.error('Get orders error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to fetch orders'
         });
     }
 });
 
-// ========================================
-// HEALTH CHECK
-// ========================================
+// ===================================
+// ADMIN ROUTES (Optional)
+// ===================================
 
-app.get('/api/health', (req, res) => {
-    res.json({ 
-        success: true, 
-        message: 'Server is running!',
-        timestamp: new Date().toISOString()
-    });
+// Update order status
+app.patch('/api/orders/:orderId/status', async (req, res) => {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    const validStatuses = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
+    if (!validStatuses.includes(status)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Invalid status'
+        });
+    }
+
+    try {
+        await pool.query(
+            'UPDATE orders SET status = $1 WHERE order_id = $2',
+            [status, orderId]
+        );
+
+        res.json({
+            success: true,
+            message: 'Order status updated'
+        });
+
+    } catch (error) {
+        console.error('Update order error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to update order'
+        });
+    }
+});
+
+// ===================================
+// HEALTH CHECK
+// ===================================
+
+app.get('/api/health', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT NOW()');
+        res.json({
+            success: true,
+            message: 'Server is running!',
+            database: 'Connected',
+            timestamp: result.rows[0].now
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Server running, database error',
+            error: error.message
+        });
+    }
 });
 
 // Root route
@@ -265,57 +397,54 @@ app.get('/', (req, res) => {
             login: 'POST /api/login',
             products: 'GET /api/products',
             orders: 'POST /api/orders',
-            orderHistory: 'GET /api/orders/:phone'
+            orderHistory: 'GET /api/orders/:phone',
+            health: 'GET /api/health'
         }
     });
 });
 
-// ========================================
+// ===================================
 // ERROR HANDLING
-// ========================================
+// ===================================
 
-// 404 handler
 app.use((req, res) => {
-    res.status(404).json({ 
-        success: false, 
-        message: 'API endpoint not found' 
+    res.status(404).json({
+        success: false,
+        message: 'API endpoint not found'
     });
 });
 
-// Global error handler
 app.use((err, req, res, next) => {
     console.error('Server Error:', err);
-    res.status(500).json({ 
-        success: false, 
-        message: 'Internal server error' 
+    res.status(500).json({
+        success: false,
+        message: 'Internal server error'
     });
 });
 
-// ========================================
-// START SERVER (Only if not in Vercel)
-// ========================================
+// ===================================
+// START SERVER
+// ===================================
 
-if (process.env.NODE_ENV !== 'production') {
-    app.listen(PORT, () => {
-        console.log(`
+app.listen(PORT, () => {
+    console.log(`
 ╔════════════════════════════════════════════╗
 ║                                            ║
 ║   🌿 ORGANIC FARM DIRECT - SERVER        ║
 ║                                            ║
-║   ✅ Server running on port ${PORT}         ║
-║   🌐 http://localhost:${PORT}              ║
-║                                            ║
-║   📡 API Endpoints:                        ║
-║   • POST /api/signup                       ║
-║   • POST /api/login                        ║
-║   • GET  /api/products                     ║
-║   • POST /api/orders                       ║
-║   • GET  /api/orders/:phone                ║
+║   ✅ Server: http://localhost:${PORT}       ║
+║   🗄️  Database: PostgreSQL                ║
+║   🌐 Environment: ${process.env.NODE_ENV || 'development'}          ║
 ║                                            ║
 ╚════════════════════════════════════════════╝
-        `);
-    });
-}
+    `);
+});
 
-// Export for Vercel
+// Graceful shutdown
+process.on('SIGTERM', () => {
+    console.log('SIGTERM received, closing server...');
+    pool.end();
+    process.exit(0);
+});
+
 module.exports = app;
