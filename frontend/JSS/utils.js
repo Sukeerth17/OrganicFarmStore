@@ -8,7 +8,7 @@ const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || wind
 
 // 🔴 IMPORTANT: Replace 'YOUR-BACKEND-URL' with your actual Render backend URL
 // Example: 'https://organic-farm-api-abc123.onrender.com/api'
-const RENDER_API_URL = 'https://YOUR-BACKEND-URL.onrender.com/api';
+const RENDER_API_URL = 'https://organic-farm-api.onrender.com';
 
 const API_BASE_URL = isLocalhost ? 'http://localhost:3000/api' : RENDER_API_URL;
 
