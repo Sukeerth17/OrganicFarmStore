@@ -1,5 +1,6 @@
 // ===================================
 // ORGANIC FARM DIRECT - PostgreSQL Backend
+// Updated with Address Support
 // ===================================
 
 const express = require('express');
@@ -206,18 +207,18 @@ app.get('/api/products/:id', async (req, res) => {
 });
 
 // ===================================
-// ORDER ROUTES
+// ORDER ROUTES (UPDATED WITH ADDRESS)
 // ===================================
 
-// 5. PLACE NEW ORDER
+// 5. PLACE NEW ORDER (UPDATED)
 app.post('/api/orders', async (req, res) => {
-    const { phone, items, amount } = req.body;
+    const { phone, items, amount, address } = req.body;
 
     // Validation
-    if (!phone || !items || !amount) {
+    if (!phone || !items || !amount || !address) {
         return res.status(400).json({
             success: false,
-            message: 'Phone, items, and amount are required'
+            message: 'Phone, items, amount, and address are required'
         });
     }
 
@@ -225,6 +226,31 @@ app.post('/api/orders', async (req, res) => {
         return res.status(400).json({
             success: false,
             message: 'Cart is empty'
+        });
+    }
+
+    // Validate address fields
+    const { name, addressPhone, line1, line2, city, state, pincode } = address;
+    if (!name || !addressPhone || !line1 || !city || !state || !pincode) {
+        return res.status(400).json({
+            success: false,
+            message: 'Please fill all required address fields'
+        });
+    }
+
+    // Validate pincode (6 digits)
+    if (!/^\d{6}$/.test(pincode)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Pincode must be 6 digits'
+        });
+    }
+
+    // Validate phone (10 digits)
+    if (!/^[6-9]\d{9}$/.test(addressPhone)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Please enter a valid phone number'
         });
     }
 
@@ -236,11 +262,19 @@ app.post('/api/orders', async (req, res) => {
         // Generate order ID
         const orderId = 'ORD' + Date.now();
 
-        // Insert order
+        // Insert order with address
         await client.query(
-            `INSERT INTO orders (order_id, user_phone, total_amount, status) 
-             VALUES ($1, $2, $3, $4)`,
-            [orderId, phone, amount, 'Processing']
+            `INSERT INTO orders (
+                order_id, user_phone, total_amount, status,
+                delivery_name, delivery_phone, address_line1, address_line2,
+                city, state, pincode
+            ) 
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+            [
+                orderId, phone, amount, 'Processing',
+                name, addressPhone, line1, line2 || '',
+                city, state, pincode
+            ]
         );
 
         // Insert order items
@@ -273,14 +307,17 @@ app.post('/api/orders', async (req, res) => {
     }
 });
 
-// 6. GET USER'S ORDER HISTORY
+// 6. GET USER'S ORDER HISTORY (UPDATED WITH ADDRESS)
 app.get('/api/orders/:phone', async (req, res) => {
     const { phone } = req.params;
 
     try {
-        // Get all orders for user
+        // Get all orders for user with address
         const ordersResult = await pool.query(
             `SELECT order_id, total_amount, status, 
+                    delivery_name, delivery_phone, 
+                    address_line1, address_line2, 
+                    city, state, pincode,
                     TO_CHAR(created_at, 'YYYY-MM-DD') as date
              FROM orders 
              WHERE user_phone = $1 
@@ -311,7 +348,16 @@ app.get('/api/orders/:phone', async (req, res) => {
                     date: order.date,
                     items: itemsResult.rows,
                     amount: order.total_amount,
-                    status: order.status
+                    status: order.status,
+                    address: {
+                        name: order.delivery_name,
+                        phone: order.delivery_phone,
+                        line1: order.address_line1,
+                        line2: order.address_line2,
+                        city: order.city,
+                        state: order.state,
+                        pincode: order.pincode
+                    }
                 };
             })
         );
@@ -398,7 +444,7 @@ app.get('/', (req, res) => {
             signup: 'POST /api/signup',
             login: 'POST /api/login',
             products: 'GET /api/products',
-            orders: 'POST /api/orders',
+            orders: 'POST /api/orders (with address)',
             orderHistory: 'GET /api/orders/:phone',
             health: 'GET /api/health'
         }
@@ -437,6 +483,7 @@ app.listen(PORT, () => {
 ║   ✅ Server: http://localhost:${PORT}       ║
 ║   🗄️  Database: PostgreSQL                ║
 ║   🌐 Environment: ${process.env.NODE_ENV || 'development'}          ║
+║   📍 Address Support: ENABLED             ║
 ║                                            ║
 ╚════════════════════════════════════════════╝
     `);
