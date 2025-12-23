@@ -1,6 +1,6 @@
 -- =====================================
 -- Schema: Create Tables for OrganicFarmStore
--- Run this with psql or via the provided init script
+-- Updated with Address Support
 -- =====================================
 
 -- Users Table
@@ -24,13 +24,23 @@ CREATE TABLE IF NOT EXISTS products (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Orders Table
+-- Orders Table (UPDATED with address fields)
 CREATE TABLE IF NOT EXISTS orders (
     id SERIAL PRIMARY KEY,
     order_id VARCHAR(50) UNIQUE NOT NULL,
     user_phone VARCHAR(10) NOT NULL REFERENCES users(phone) ON DELETE CASCADE,
     total_amount INTEGER NOT NULL,
     status VARCHAR(50) DEFAULT 'Processing',
+    
+    -- Address fields
+    delivery_name VARCHAR(255) NOT NULL,
+    delivery_phone VARCHAR(10) NOT NULL,
+    address_line1 VARCHAR(500) NOT NULL,
+    address_line2 VARCHAR(500),
+    city VARCHAR(100) NOT NULL,
+    state VARCHAR(100) NOT NULL,
+    pincode VARCHAR(6) NOT NULL,
+    
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

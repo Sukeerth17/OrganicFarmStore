@@ -1,4 +1,4 @@
-/* CHECKOUT PAGE STYLES */
+/* CHECKOUT PAGE STYLES - UPDATED WITH ADDRESS FORM */
 
 .checkout-main {
     min-height: 100vh;
@@ -14,13 +14,95 @@
     margin: 0 auto;
 }
 
+.checkout-left {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* ===================================
+   ADDRESS FORM SECTION - NEW
+   =================================== */
+
+.address-section {
+    background: linear-gradient(145deg, #1e1e1e 0%, #0d0d0d 100%);
+    border: 1px solid rgba(78, 52, 46, 0.5);
+    border-radius: 20px;
+    padding: 35px;
+}
+
+.address-section h2 {
+    color: #D4AF37;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    font-family: 'Playfair Display', serif;
+}
+
+#address-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-row {
+    width: 100%;
+}
+
+.form-row input,
+.form-row-group input {
+    width: 100%;
+    padding: 16px 20px;
+    background: rgba(26, 26, 26, 0.8);
+    border: 2px solid rgba(212, 175, 55, 0.3);
+    border-radius: 12px;
+    color: #F5F5F5;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-row input::placeholder,
+.form-row-group input::placeholder {
+    color: rgba(245, 245, 245, 0.5);
+}
+
+.form-row input:focus,
+.form-row-group input:focus {
+    border-color: #D4AF37;
+    background: rgba(26, 26, 26, 1);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+.form-row input:hover,
+.form-row-group input:hover {
+    border-color: rgba(212, 175, 55, 0.5);
+}
+
+/* Input validation states */
+.form-row input:invalid:not(:placeholder-shown),
+.form-row-group input:invalid:not(:placeholder-shown) {
+    border-color: #ff4444;
+}
+
+.form-row input:valid:not(:placeholder-shown),
+.form-row-group input:valid:not(:placeholder-shown) {
+    border-color: #4ade80;
+}
+
+/* Form row group for side-by-side inputs */
+.form-row-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
 /* Order Summary Section */
 .order-summary-section {
     background: linear-gradient(145deg, #1e1e1e 0%, #0d0d0d 100%);
     border: 1px solid rgba(78, 52, 46, 0.5);
     border-radius: 20px;
     padding: 35px;
-    height: fit-content;
 }
 
 .order-summary-section h2 {
@@ -233,9 +315,14 @@
         padding: 100px 4% 60px 4%;
     }
     
+    .address-section,
     .order-summary-section,
     .payment-section {
         padding: 30px;
+    }
+    
+    .form-row-group {
+        grid-template-columns: 1fr;
     }
     
     .option-content {
@@ -249,9 +336,16 @@
 }
 
 @media (max-width: 480px) {
+    .address-section,
     .order-summary-section,
     .payment-section {
         padding: 25px;
+    }
+    
+    .form-row input,
+    .form-row-group input {
+        padding: 14px 16px;
+        font-size: 0.95rem;
     }
     
     .order-item {

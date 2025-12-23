@@ -17,35 +17,66 @@
         <p class="page-subtitle">Complete your order</p>
 
         <div class="checkout-container">
-            <!-- Order Summary -->
-            <div class="order-summary-section">
-                <h2>Order Summary</h2>
-                <div id="order-items"></div>
-                
-                <div class="summary-totals">
-                    <div class="summary-row">
-                        <span>Subtotal:</span>
-                        <span id="checkout-subtotal">₹0</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Delivery:</span>
-                        <span id="checkout-delivery">₹50</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Discount:</span>
-                        <span id="checkout-discount" style="color: #4ade80;">-₹0</span>
-                    </div>
-                    <div class="summary-divider"></div>
-                    <div class="summary-row total">
-                        <span>Total:</span>
-                        <span id="checkout-total">₹0</span>
+            <!-- Left Side: Delivery Address & Order Summary -->
+            <div class="checkout-left">
+                <!-- Delivery Address Form -->
+                <div class="address-section">
+                    <h2>📍 Delivery Address</h2>
+                    <form id="address-form">
+                        <div class="form-row">
+                            <input type="text" id="delivery-name" placeholder="Full Name *" required>
+                        </div>
+                        <div class="form-row">
+                            <input type="tel" id="delivery-phone" placeholder="Phone Number (10 digits) *" 
+                                   maxlength="10" required pattern="[6-9][0-9]{9}">
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="address-line1" placeholder="House No, Street, Area *" required>
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="address-line2" placeholder="Landmark (Optional)">
+                        </div>
+                        <div class="form-row-group">
+                            <input type="text" id="city" placeholder="City *" required>
+                            <input type="text" id="state" placeholder="State *" required>
+                        </div>
+                        <div class="form-row">
+                            <input type="text" id="pincode" placeholder="Pincode (6 digits) *" 
+                                   maxlength="6" required pattern="[0-9]{6}">
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="order-summary-section">
+                    <h2>🛒 Order Summary</h2>
+                    <div id="order-items"></div>
+                    
+                    <div class="summary-totals">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span id="checkout-subtotal">₹0</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Delivery:</span>
+                            <span id="checkout-delivery">₹50</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Discount:</span>
+                            <span id="checkout-discount" style="color: #4ade80;">-₹0</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-row total">
+                            <span>Total:</span>
+                            <span id="checkout-total">₹0</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Payment Options -->
+            <!-- Right Side: Payment Options -->
             <div class="payment-section">
-                <h2>Payment Method</h2>
+                <h2>💳 Payment Method</h2>
                 
                 <div class="payment-options">
                     <label class="payment-option">

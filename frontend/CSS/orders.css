@@ -1,4 +1,4 @@
-/* ORDERS PAGE STYLES */
+/* ORDERS PAGE STYLES - UPDATED WITH ADDRESS DISPLAY */
 
 .orders-main {
     min-height: 100vh;
@@ -95,6 +95,34 @@
     background: linear-gradient(135deg, rgba(96, 165, 250, 0.2), rgba(59, 130, 246, 0.2));
     color: #60a5fa;
     border: 2px solid #60a5fa;
+}
+
+/* Delivery Address Section - NEW */
+.delivery-address {
+    background: rgba(26, 26, 26, 0.5);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+}
+
+.delivery-address h4 {
+    color: #D4AF37;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    font-family: 'Playfair Display', serif;
+}
+
+.delivery-address p {
+    color: #F5F5F5;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 5px 0;
+}
+
+.delivery-address p strong {
+    color: #D4AF37;
+    font-weight: 600;
 }
 
 /* Order Items */
@@ -194,6 +222,10 @@
         align-self: flex-start;
     }
     
+    .delivery-address {
+        padding: 20px;
+    }
+    
     .order-footer {
         flex-direction: column;
         gap: 20px;
@@ -216,6 +248,18 @@
     
     .order-total {
         font-size: 1.4rem;
+    }
+    
+    .delivery-address {
+        padding: 15px;
+    }
+    
+    .delivery-address h4 {
+        font-size: 1.1rem;
+    }
+    
+    .delivery-address p {
+        font-size: 0.9rem;
     }
     
     .order-item {

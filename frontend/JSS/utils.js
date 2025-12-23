@@ -1,4 +1,5 @@
 // SHARED UTILITY FUNCTIONS - Works with Render Backend
+// UPDATED WITH ADDRESS SUPPORT
 
 // ===================================
 // API CONFIGURATION - FIXED
@@ -235,7 +236,14 @@ async function getAllProducts() {
     return apiCall('/products');
 }
 
+// ✅ NEW: Place order with address
+async function placeOrderWithAddress(phone, items, amount, address) {
+    return apiCall('/orders', 'POST', { phone, items, amount, address });
+}
+
+// Legacy function for backward compatibility
 async function placeOrder(phone, items, amount) {
+    console.warn('⚠️ placeOrder() is deprecated. Use placeOrderWithAddress() instead.');
     return apiCall('/orders', 'POST', { phone, items, amount });
 }
 
@@ -260,6 +268,18 @@ function formatDate(dateString) {
     });
 }
 
+function formatAddress(address) {
+    if (!address) return '';
+    const parts = [
+        address.line1,
+        address.line2,
+        address.city,
+        address.state,
+        address.pincode
+    ].filter(Boolean);
+    return parts.join(', ');
+}
+
 // ===================================
 // 6. VALIDATION
 // ===================================
@@ -276,6 +296,11 @@ function validatePassword(password) {
 function validateEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
+}
+
+function validatePincode(pincode) {
+    const pincodeRegex = /^\d{6}$/;
+    return pincodeRegex.test(pincode);
 }
 
 // ===================================
@@ -334,12 +359,15 @@ window.utils = {
     signupUser,
     getAllProducts,
     placeOrder,
+    placeOrderWithAddress, // ✅ NEW
     getUserOrders,
     formatCurrency,
     formatDate,
+    formatAddress, // ✅ NEW
     validatePhone,
     validatePassword,
     validateEmail,
+    validatePincode, // ✅ NEW
     showLoader,
     hideLoader
 };

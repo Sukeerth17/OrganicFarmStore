@@ -1,4 +1,4 @@
-// ORDERS PAGE JAVASCRIPT
+// ORDERS PAGE JAVASCRIPT - UPDATED TO SHOW ADDRESS
 
 // Load user orders
 document.addEventListener('DOMContentLoaded', async () => {
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// Display orders
+// Display orders with address
 function displayOrders(orders) {
     const ordersList = document.getElementById('orders-list');
     
@@ -51,6 +51,17 @@ function displayOrders(orders) {
                     ${order.status}
                 </span>
             </div>
+            
+            ${order.address ? `
+                <div class="delivery-address">
+                    <h4>📍 Delivery Address</h4>
+                    <p><strong>${order.address.name}</strong></p>
+                    <p>📞 ${order.address.phone}</p>
+                    <p>${order.address.line1}</p>
+                    ${order.address.line2 ? `<p>${order.address.line2}</p>` : ''}
+                    <p>${order.address.city}, ${order.address.state} - ${order.address.pincode}</p>
+                </div>
+            ` : ''}
             
             <div class="order-items">
                 ${order.items.map(item => `
