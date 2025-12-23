@@ -1,16 +1,19 @@
 // SHARED UTILITY FUNCTIONS - Works with Render Backend
 
 // ===================================
-// API CONFIGURATION
+// API CONFIGURATION - FIXED
 // ===================================
 const hostname = window.location.hostname;
 const isLocalhost = hostname === 'localhost' || hostname === '127.0.0.1' || window.location.protocol === 'file:';
 
-// 🔴 IMPORTANT: Replace 'YOUR-BACKEND-URL' with your actual Render backend URL
-// Example: 'https://organic-farm-api-abc123.onrender.com/api'
-const RENDER_API_URL = 'https://organic-farm-api.onrender.com';
+// 🔴 IMPORTANT: Replace with your actual Render backend URL
+// Example: 'https://organic-farm-api-abc123.onrender.com'
+const RENDER_BACKEND_URL = 'https://organic-farm-api.onrender.com';
 
-const API_BASE_URL = isLocalhost ? 'http://localhost:3000/api' : RENDER_API_URL;
+// ✅ FIXED: Always use /api prefix
+const API_BASE_URL = isLocalhost 
+    ? 'http://localhost:3000/api' 
+    : `${RENDER_BACKEND_URL}/api`;
 
 // ===================================
 // 1. TOAST NOTIFICATIONS
@@ -156,7 +159,7 @@ function requireLogin() {
 }
 
 // ===================================
-// 4. API CALLS - FIXED ERROR HANDLING
+// 4. API CALLS - IMPROVED ERROR HANDLING
 // ===================================
 
 async function apiCall(endpoint, method = 'GET', data = null) {
@@ -172,12 +175,14 @@ async function apiCall(endpoint, method = 'GET', data = null) {
             options.body = JSON.stringify(data);
         }
 
-        console.log(`API Call: ${method} ${API_BASE_URL}${endpoint}`);
+        const fullUrl = `${API_BASE_URL}${endpoint}`;
+        console.log(`🌐 API Call: ${method} ${fullUrl}`);
         
-        const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
+        const response = await fetch(fullUrl, options);
 
         // Read response as text first
         const text = await response.text();
+        console.log('📥 Response:', text.substring(0, 200));
         
         // Try to parse JSON
         let result = null;
@@ -185,28 +190,31 @@ async function apiCall(endpoint, method = 'GET', data = null) {
             try {
                 result = JSON.parse(text);
             } catch (parseErr) {
-                console.error('Failed to parse JSON:', text);
-                throw new Error(`Server returned invalid JSON: ${parseErr.message}`);
+                console.error('❌ Failed to parse JSON:', text);
+                throw new Error(`Server returned invalid JSON`);
             }
         }
 
         // Handle HTTP errors
         if (!response.ok) {
             const errorMessage = result?.message || `HTTP ${response.status}: ${response.statusText}`;
+            console.error('❌ HTTP Error:', errorMessage);
             throw new Error(errorMessage);
         }
 
         // Handle API-level errors
         if (result && result.success === false) {
+            console.error('❌ API Error:', result.message);
             throw new Error(result.message || 'API request failed');
         }
 
+        console.log('✅ API Success:', result);
         return result;
     } catch (error) {
-        console.error('API Error:', error);
+        console.error('❌ API Error:', error);
         
         // User-friendly error messages
-        if (error.message.includes('fetch')) {
+        if (error.message.includes('fetch') || error.message.includes('NetworkError')) {
             throw new Error('Unable to connect to server. Please check your internet connection.');
         }
         
@@ -337,14 +345,18 @@ window.utils = {
 };
 
 // Log current configuration
-console.log('🌿 Organic Farm Direct');
-console.log('Environment:', isLocalhost ? 'Development (localhost)' : 'Production');
-console.log('API URL:', API_BASE_URL);
-console.log('Backend Status: Testing connection...');
+console.log('🌿 Organic Farm Direct - API Configuration');
+console.log('Environment:', isLocalhost ? '🔧 Development (localhost)' : '🚀 Production');
+console.log('API Base URL:', API_BASE_URL);
+console.log('Testing backend connection...');
 
 // Test backend connection on page load
-if (!isLocalhost) {
-    apiCall('/health')
-        .then(() => console.log('✅ Backend connection successful'))
-        .catch(err => console.error('❌ Backend connection failed:', err.message));
-}
+apiCall('/health')
+    .then(data => {
+        console.log('✅ Backend connection successful');
+        console.log('Server Info:', data);
+    })
+    .catch(err => {
+        console.error('❌ Backend connection failed:', err.message);
+        console.error('Please ensure your backend is deployed and the URL is correct');
+    });
