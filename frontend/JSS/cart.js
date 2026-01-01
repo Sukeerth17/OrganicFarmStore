@@ -1,4 +1,4 @@
-// CART PAGE JAVASCRIPT
+// CART PAGE JAVASCRIPT - UPDATED WITH NEW DISCOUNT SYSTEM
 
 function displayCartItems() {
     const cart = window.utils.getCart();
@@ -8,7 +8,7 @@ function displayCartItems() {
     if (cart.length === 0) {
         cartList.style.display = 'none';
         emptyMessage.style.display = 'block';
-        updateCartSummary(0, 0, 0);
+        updateCartSummary();
         return;
     }
 
@@ -69,16 +69,61 @@ function removeItem(productId) {
 
 function updateCartSummary() {
     const cart = window.utils.getCart();
+    const totals = window.utils.calculateOrderTotals(cart);
     
-    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    const delivery = subtotal > 0 ? 50 : 0;
-    const discount = subtotal > 1000 ? 100 : 0;
-    const total = subtotal + delivery - discount;
-
-    document.getElementById('subtotal').textContent = window.utils.formatCurrency(subtotal);
-    document.getElementById('delivery').textContent = window.utils.formatCurrency(delivery);
-    document.getElementById('discount').textContent = `-${window.utils.formatCurrency(discount)}`;
-    document.getElementById('grand-total').textContent = window.utils.formatCurrency(total);
+    document.getElementById('subtotal').textContent = window.utils.formatCurrency(totals.subtotal);
+    document.getElementById('delivery').textContent = window.utils.formatCurrency(totals.delivery);
+    
+    // Show discount with percentage
+    const discountEl = document.getElementById('discount');
+    if (totals.discount.amount > 0) {
+        discountEl.textContent = `-${window.utils.formatCurrency(totals.discount.amount)} (${totals.discount.percentage}% off)`;
+        discountEl.style.color = '#4ade80';
+        
+        // Show which discount was applied
+        if (totals.discount.percentage > 0) {
+            const discountNote = document.createElement('div');
+            discountNote.className = 'discount-note';
+            discountNote.style.cssText = `
+                color: #4ade80;
+                font-size: 0.85rem;
+                margin-top: 5px;
+                font-weight: 600;
+            `;
+            discountNote.textContent = `🎉 ${totals.discount.type} Applied!`;
+            
+            // Remove existing discount note
+            const existingNote = document.querySelector('.discount-note');
+            if (existingNote) existingNote.remove();
+            
+            // Add new note
+            discountEl.parentElement.appendChild(discountNote);
+        }
+    } else {
+        discountEl.textContent = `-${window.utils.formatCurrency(0)}`;
+        discountEl.style.color = '#F5F5F5';
+        
+        // Show how much more to unlock discount
+        const remaining = 1000 - totals.subtotal;
+        if (remaining > 0 && totals.subtotal > 0) {
+            const tipNote = document.createElement('div');
+            tipNote.className = 'discount-note';
+            tipNote.style.cssText = `
+                color: #D4AF37;
+                font-size: 0.85rem;
+                margin-top: 5px;
+                font-weight: 600;
+            `;
+            tipNote.textContent = `💡 Add ${window.utils.formatCurrency(remaining)} more to get 10% off!`;
+            
+            const existingNote = document.querySelector('.discount-note');
+            if (existingNote) existingNote.remove();
+            
+            discountEl.parentElement.appendChild(tipNote);
+        }
+    }
+    
+    document.getElementById('grand-total').textContent = window.utils.formatCurrency(totals.total);
 }
 
 function goToCheckout() {

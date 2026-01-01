@@ -1,4 +1,4 @@
-// CHECKOUT PAGE JAVASCRIPT - UPDATED WITH ADDRESS SUPPORT
+// CHECKOUT PAGE JAVASCRIPT - UPDATED WITH ADDRESS SUPPORT AND NEW DISCOUNTS
 
 // Check login and load order summary
 document.addEventListener('DOMContentLoaded', () => {
@@ -49,19 +49,63 @@ function displayOrderSummary() {
     updateCheckoutTotals();
 }
 
-// Update checkout totals
+// Update checkout totals with new discount system
 function updateCheckoutTotals() {
     const cart = window.utils.getCart();
-    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    const delivery = subtotal > 0 ? 50 : 0;
-    const discount = subtotal > 1000 ? 100 : 0;
-    const total = subtotal + delivery - discount;
+    const totals = window.utils.calculateOrderTotals(cart);
     
-    document.getElementById('checkout-subtotal').textContent = window.utils.formatCurrency(subtotal);
-    document.getElementById('checkout-delivery').textContent = window.utils.formatCurrency(delivery);
-    document.getElementById('checkout-discount').textContent = `-${window.utils.formatCurrency(discount)}`;
-    document.getElementById('checkout-total').textContent = window.utils.formatCurrency(total);
-    document.getElementById('qr-amount').textContent = total;
+    document.getElementById('checkout-subtotal').textContent = window.utils.formatCurrency(totals.subtotal);
+    document.getElementById('checkout-delivery').textContent = window.utils.formatCurrency(totals.delivery);
+    
+    // Show discount with details
+    const discountEl = document.getElementById('checkout-discount');
+    if (totals.discount.amount > 0) {
+        discountEl.textContent = `-${window.utils.formatCurrency(totals.discount.amount)} (${totals.discount.percentage}% ${totals.discount.type})`;
+        discountEl.style.color = '#4ade80';
+        
+        // Show celebration message
+        const celebrationMsg = document.createElement('div');
+        celebrationMsg.style.cssText = `
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(34, 197, 94, 0.1));
+            border: 1px solid #4ade80;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            color: #4ade80;
+            font-weight: 600;
+            text-align: center;
+        `;
+        
+        let celebrationText = '🎉 ';
+        if (totals.discount.percentage === 20) {
+            celebrationText += 'Amazing! You got our BEST Premium Festive Discount!';
+        } else if (totals.discount.percentage === 15) {
+            celebrationText += 'Great! Festive Discount Applied!';
+        } else if (totals.discount.percentage === 10) {
+            celebrationText += 'You got a discount!';
+        }
+        celebrationMsg.textContent = celebrationText;
+        
+        // Remove existing celebration
+        const existing = document.querySelector('.celebration-msg');
+        if (existing) existing.remove();
+        
+        celebrationMsg.className = 'celebration-msg';
+        document.querySelector('.summary-totals').insertBefore(
+            celebrationMsg, 
+            document.querySelector('.summary-totals').firstChild
+        );
+    } else {
+        discountEl.textContent = `-${window.utils.formatCurrency(0)}`;
+        discountEl.style.color = 'rgba(245, 245, 245, 0.5)';
+        
+        // Remove celebration if exists
+        const existing = document.querySelector('.celebration-msg');
+        if (existing) existing.remove();
+    }
+    
+    document.getElementById('checkout-total').textContent = window.utils.formatCurrency(totals.total);
+    document.getElementById('qr-amount').textContent = totals.total;
 }
 
 // Setup payment option listeners
@@ -141,7 +185,7 @@ function getAddressData() {
     };
 }
 
-// Place order
+// Place order with new discount system
 async function placeOrder() {
     // Validate address form first
     if (!validateAddressForm()) {
@@ -158,17 +202,22 @@ async function placeOrder() {
         return;
     }
     
-    // Calculate total
-    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
-    const delivery = 50;
-    const discount = subtotal > 1000 ? 100 : 0;
-    const total = subtotal + delivery - discount;
+    // Calculate totals using new discount system
+    const totals = window.utils.calculateOrderTotals(cart);
     
     // Show confirmation
     const addressSummary = `${address.line1}, ${address.city}, ${address.state} - ${address.pincode}`;
-    const confirmMessage = paymentMethod === 'cod' 
-        ? `Place order for ${window.utils.formatCurrency(total)}?\n\nDelivery to:\n${address.name}\n${addressSummary}\n\nPayment: Cash on Delivery`
-        : `Have you completed the UPI payment of ${window.utils.formatCurrency(total)}?\n\nDelivery to:\n${address.name}\n${addressSummary}`;
+    let confirmMessage = `Place order for ${window.utils.formatCurrency(totals.total)}?\n\n`;
+    
+    if (totals.discount.amount > 0) {
+        confirmMessage += `🎉 ${totals.discount.type} Applied!\n`;
+        confirmMessage += `You saved ${window.utils.formatCurrency(totals.discount.amount)} (${totals.discount.percentage}% off)\n\n`;
+    }
+    
+    confirmMessage += `Delivery to:\n${address.name}\n${addressSummary}\n\n`;
+    confirmMessage += paymentMethod === 'cod' 
+        ? 'Payment: Cash on Delivery'
+        : 'Payment: UPI (Please ensure payment is completed)';
     
     if (!confirm(confirmMessage)) {
         return;
@@ -181,7 +230,7 @@ async function placeOrder() {
         const response = await window.utils.placeOrderWithAddress(
             user.phone, 
             cart, 
-            total, 
+            totals.total, 
             address
         );
         
@@ -189,10 +238,13 @@ async function placeOrder() {
         window.utils.clearCart();
         
         window.utils.hideLoader();
-        window.utils.showNotification(
-            `Order placed successfully! Order ID: ${response.orderId}`, 
-            'success'
-        );
+        
+        let successMessage = `Order placed successfully! Order ID: ${response.orderId}`;
+        if (totals.discount.amount > 0) {
+            successMessage += `\n🎉 You saved ${window.utils.formatCurrency(totals.discount.amount)}!`;
+        }
+        
+        window.utils.showNotification(successMessage, 'success');
         
         // Redirect to orders page
         setTimeout(() => {

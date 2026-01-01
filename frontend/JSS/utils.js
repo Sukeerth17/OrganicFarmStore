@@ -1,5 +1,5 @@
 // SHARED UTILITY FUNCTIONS - Works with Render Backend
-// UPDATED WITH ADDRESS SUPPORT
+// UPDATED WITH ADDRESS SUPPORT AND NEW DISCOUNT CALCULATIONS
 
 // ===================================
 // API CONFIGURATION - FIXED
@@ -15,6 +15,60 @@ const RENDER_BACKEND_URL = 'https://organic-farm-api.onrender.com';
 const API_BASE_URL = isLocalhost 
     ? 'http://localhost:3000/api' 
     : `${RENDER_BACKEND_URL}/api`;
+
+// ===================================
+// DISCOUNT CALCULATIONS
+// ===================================
+
+/**
+ * Calculate discount based on subtotal
+ * - 10% off orders above ₹1,000
+ * - 15% off orders above ₹1,500 (Christmas/New Year Special)
+ * - 20% off orders above ₹2,000 (Christmas/New Year Special)
+ */
+function calculateDiscount(subtotal) {
+    if (subtotal >= 2000) {
+        return {
+            amount: Math.round(subtotal * 0.20),
+            percentage: 20,
+            type: 'Premium Festive Discount'
+        };
+    } else if (subtotal >= 1500) {
+        return {
+            amount: Math.round(subtotal * 0.15),
+            percentage: 15,
+            type: 'Festive Discount'
+        };
+    } else if (subtotal >= 1000) {
+        return {
+            amount: Math.round(subtotal * 0.10),
+            percentage: 10,
+            type: 'Basic Discount'
+        };
+    }
+    return {
+        amount: 0,
+        percentage: 0,
+        type: 'No Discount'
+    };
+}
+
+/**
+ * Calculate order totals with automatic discounts
+ */
+function calculateOrderTotals(cart) {
+    const subtotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const delivery = subtotal > 0 ? 50 : 0;
+    const discount = calculateDiscount(subtotal);
+    const total = subtotal + delivery - discount.amount;
+    
+    return {
+        subtotal,
+        delivery,
+        discount,
+        total
+    };
+}
 
 // ===================================
 // 1. TOAST NOTIFICATIONS
@@ -236,7 +290,7 @@ async function getAllProducts() {
     return apiCall('/products');
 }
 
-// ✅ NEW: Place order with address
+// ✅ Place order with address
 async function placeOrderWithAddress(phone, items, amount, address) {
     return apiCall('/orders', 'POST', { phone, items, amount, address });
 }
@@ -351,6 +405,8 @@ window.utils = {
     updateCartQuantity,
     clearCart,
     getCartTotal,
+    calculateDiscount,
+    calculateOrderTotals,
     isUserLoggedIn,
     getCurrentUser,
     requireLogin,
@@ -359,15 +415,15 @@ window.utils = {
     signupUser,
     getAllProducts,
     placeOrder,
-    placeOrderWithAddress, // ✅ NEW
+    placeOrderWithAddress,
     getUserOrders,
     formatCurrency,
     formatDate,
-    formatAddress, // ✅ NEW
+    formatAddress,
     validatePhone,
     validatePassword,
     validateEmail,
-    validatePincode, // ✅ NEW
+    validatePincode,
     showLoader,
     hideLoader
 };

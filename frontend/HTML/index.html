@@ -45,6 +45,54 @@
     <section class="story-section">
         <h2>Our Organic Story</h2>
         <p>For three generations, our family has cultivated the finest organic produce in the heart of Karnataka. Every fruit and vegetable is grown with love, harvested at peak ripeness, and delivered with the care it deserves. We believe in sustainable farming, ethical practices, and bringing nature's best to your table.</p>
+        
+        <!-- NEW: Discount Toggle Button -->
+        <div style="margin-top: 40px;">
+            <button id="discountToggleBtn" class="btn-outline" onclick="toggleDiscounts()">
+                🎄 View Festive Discounts
+            </button>
+        </div>
+    </section>
+
+    <!-- NEW: DISCOUNT SECTION (Hidden by default) -->
+    <section class="discount-section" id="discountSection" style="display: none;">
+        <div class="discount-container">
+            <h2>🎄 Christmas & New Year Special 🎊</h2>
+            <p class="discount-subtitle">Automatic discounts applied at checkout!</p>
+            
+            <div class="discount-cards">
+                <div class="discount-card">
+                    <div class="discount-icon">🎁</div>
+                    <h3>Basic Discount</h3>
+                    <div class="discount-percentage">10% OFF</div>
+                    <p>On orders above <strong>₹1,000</strong></p>
+                    <div class="discount-example">Save up to ₹100+</div>
+                </div>
+                
+                <div class="discount-card featured">
+                    <div class="discount-badge">POPULAR</div>
+                    <div class="discount-icon">🌟</div>
+                    <h3>Festive Discount</h3>
+                    <div class="discount-percentage">15% OFF</div>
+                    <p>On orders above <strong>₹1,500</strong></p>
+                    <div class="discount-example">Save up to ₹225+</div>
+                </div>
+                
+                <div class="discount-card premium">
+                    <div class="discount-badge">BEST VALUE</div>
+                    <div class="discount-icon">💎</div>
+                    <h3>Premium Discount</h3>
+                    <div class="discount-percentage">20% OFF</div>
+                    <p>On orders above <strong>₹2,000</strong></p>
+                    <div class="discount-example">Save up to ₹400+</div>
+                </div>
+            </div>
+            
+            <div class="discount-note">
+                <p>✨ <strong>Automatic Application:</strong> Discounts are automatically applied at checkout based on your cart value. No coupon codes needed!</p>
+                <p>⏰ <strong>Limited Time:</strong> Offer valid till January 15, 2026</p>
+            </div>
+        </div>
     </section>
 
     <!-- CTA SECTION -->
