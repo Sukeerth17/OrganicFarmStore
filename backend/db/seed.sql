@@ -17,7 +17,7 @@ VALUES
 ('Fresh Bell Peppers', 90, 'kg', 'https://i.pinimg.com/1200x/c4/89/d7/c489d7627b31f4c386c4803a3da262f7.jpg', 'Vegetables'),
 ('Organic Broccoli', 100, 'kg', 'https://images.unsplash.com/photo-1583663848850-46af132dc08e?w=800&h=800&fit=crop&q=90', 'Vegetables'),
 ('Sweet Watermelon', 70, 'kg', 'https://i.pinimg.com/1200x/1d/01/ae/1d01aeebde458c69892b9aaa73690adc.jpg', 'Fruits')
-ON CONFLICT DO NOTHING;
+ON CONFLICT (name, unit) DO NOTHING;
 
 -- Insert test user (plaintext password for dev only)
 INSERT INTO users (name, phone, password)
