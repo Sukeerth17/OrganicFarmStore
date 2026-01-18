@@ -8,7 +8,15 @@ async function loadProducts() {
     
     try {
         const response = await window.utils.getAllProducts();
-        products = response.products;
+        // Defensive: ensure products is an array
+        products = Array.isArray(response.products) ? response.products : [];
+
+        // Deduplicate by id (protect against duplicate rows in DB or repeated responses)
+        const uniqueMap = new Map();
+        for (const p of products) {
+            if (!uniqueMap.has(p.id)) uniqueMap.set(p.id, p);
+        }
+        products = Array.from(uniqueMap.values());
         
         if (products.length === 0) {
             container.innerHTML = '<p style="text-align:center; color:#F5F5F5;">No products available</p>';
