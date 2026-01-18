@@ -307,6 +307,58 @@ app.post('/api/orders', async (req, res) => {
     }
 });
 
+// ===================================
+// CONTACT ROUTES
+// -----------------------------------
+// Store contact form submissions and list them for admin
+// ===================================
+
+// POST /api/contact - save a contact message
+app.post('/api/contact', async (req, res) => {
+    const { name, email, phone, message } = req.body;
+
+    if (!name || !message) {
+        return res.status(400).json({ success: false, message: 'Name and message are required' });
+    }
+
+    // basic validation for email and phone if provided
+    if (email && !/^\S+@\S+\.\S+$/.test(email)) {
+        return res.status(400).json({ success: false, message: 'Invalid email address' });
+    }
+
+    if (phone && !/^[0-9+\-()\s]{6,20}$/.test(phone)) {
+        return res.status(400).json({ success: false, message: 'Invalid phone number' });
+    }
+
+    try {
+        await pool.query(
+            'INSERT INTO contacts (name, email, phone, message) VALUES ($1, $2, $3, $4)',
+            [name, email || null, phone || null, message]
+        );
+
+        res.status(201).json({ success: true, message: 'Message received. We will get back to you soon.' });
+    } catch (error) {
+        console.error('Contact save error:', error);
+        res.status(500).json({ success: false, message: 'Failed to save message' });
+    }
+});
+
+// GET /api/contacts - retrieve all contact messages (for admin)
+app.get('/api/contacts', async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT id, name, email, phone, message, TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at
+             FROM contacts
+             ORDER BY created_at DESC`
+        );
+
+        res.json({ success: true, contacts: result.rows });
+    } catch (error) {
+        console.error('Get contacts error:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch contacts' });
+    }
+});
+
 // 6. GET USER'S ORDER HISTORY (UPDATED WITH ADDRESS)
 app.get('/api/orders/:phone', async (req, res) => {
     const { phone } = req.params;
@@ -446,6 +498,8 @@ app.get('/', (req, res) => {
             products: 'GET /api/products',
             orders: 'POST /api/orders (with address)',
             orderHistory: 'GET /api/orders/:phone',
+            contact: 'POST /api/contact',
+            contactsList: 'GET /api/contacts',
             health: 'GET /api/health'
         }
     });

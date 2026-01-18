@@ -16,7 +16,13 @@ async function run() {
     process.exit(1);
   }
 
-  const client = new Client({ connectionString });
+  // Support SSL connections (e.g., managed Postgres services)
+  const client = new Client({
+    connectionString,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  });
 
   try {
     await client.connect();

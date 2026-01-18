@@ -20,24 +20,19 @@ function handleContactForm(event) {
         return;
     }
     
-    // In a real application, this would send to backend
-    // For now, just show success message
+    // Send to backend API
     window.utils.showLoader();
-    
-    setTimeout(() => {
-        window.utils.hideLoader();
-        window.utils.showNotification('Thank you! We will get back to you soon.', 'success');
-        
-        // Clear form
-        document.getElementById('contact-form').reset();
-    }, 1500);
-    
-    // Log to console (in production, send to backend)
-    console.log('Contact Form Submission:', {
-        name,
-        email,
-        phone,
-        message,
-        timestamp: new Date().toISOString()
-    });
+
+    window.utils.apiCall('/contact', 'POST', { name, email, phone, message })
+        .then(response => {
+            window.utils.hideLoader();
+            window.utils.showNotification(response.message || 'Thank you! We will get back to you soon.', 'success');
+            document.getElementById('contact-form').reset();
+            console.log('Contact Form Submission saved:', response);
+        })
+        .catch(err => {
+            window.utils.hideLoader();
+            console.error('Failed to submit contact form:', err.message || err);
+            window.utils.showNotification(err.message || 'Failed to send message. Please try again later.', 'error');
+        });
 }

@@ -221,9 +221,9 @@
     }
 }
 
-/* Discount Section (added) */
+
 .discount-section {
-    background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%); /* red gradient */
+    background: linear-gradient(135deg, #ff4d4d 0%, #cc0000 100%); 
     padding: 60px 6%;
     color: #fff;
     border-radius: 14px;
@@ -235,7 +235,7 @@
 }
 
 .discount-section::after {
-    /* subtle decorative lights/confetti */
+    
     content: '';
     position: absolute;
     top: -20px;
@@ -298,7 +298,7 @@
     font-size: 1.6rem;
     font-weight: 700;
     margin-top: 8px;
-    /* shiny text effect */
+    
     background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.9) 100%);
     -webkit-background-clip: text;
     background-clip: text;
