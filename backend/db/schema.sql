@@ -72,3 +72,16 @@ CREATE TABLE IF NOT EXISTS contacts (
 );
 
 CREATE INDEX IF NOT EXISTS idx_contacts_created_at ON contacts(created_at DESC);
+
+-- Feedbacks Table (customer ratings & messages for orders)
+CREATE TABLE IF NOT EXISTS feedbacks (
+    id SERIAL PRIMARY KEY,
+    order_id VARCHAR(50) NOT NULL REFERENCES orders(order_id) ON DELETE CASCADE,
+    user_phone VARCHAR(10),
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    message TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_feedbacks_order_id ON feedbacks(order_id);
+CREATE INDEX IF NOT EXISTS idx_feedbacks_user_phone ON feedbacks(user_phone);

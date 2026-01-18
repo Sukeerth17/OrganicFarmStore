@@ -31,6 +31,96 @@ function prefillUserInfo() {
     }
 }
 
+// -----------------------------
+// Feedback modal (rating + message)
+// -----------------------------
+function showFeedbackModal(orderId, userPhone) {
+    // Remove existing modal if present
+    const existing = document.getElementById('feedback-modal');
+    if (existing) existing.remove();
+
+    const modal = document.createElement('div');
+    modal.id = 'feedback-modal';
+    modal.style.cssText = `
+        position: fixed; inset: 0; display: flex; align-items: center; justify-content: center;
+        background: rgba(0,0,0,0.6); z-index: 99999; padding: 20px;
+    `;
+
+    modal.innerHTML = `
+        <div style="background: #0d0d0d; padding: 22px; border-radius: 12px; width: 100%; max-width: 680px; color: #fff; box-shadow: 0 20px 60px rgba(0,0,0,0.7);">
+            <h3 style="margin-top:0;">Rate your experience</h3>
+            <p style="color: #ddd;">How was your order <strong>${orderId}</strong>? Please rate and leave a short message (optional).</p>
+            <div id="feedback-stars" style="font-size: 2.2rem; margin: 10px 0; color: #ffd166; cursor: pointer;">
+                <span data-value="1">☆</span>
+                <span data-value="2">☆</span>
+                <span data-value="3">☆</span>
+                <span data-value="4">☆</span>
+                <span data-value="5">☆</span>
+            </div>
+            <textarea id="feedback-message" rows="4" placeholder="Write a short message (optional)" style="width:100%; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.02); color:#fff; margin-bottom:12px;"></textarea>
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button id="feedback-skip" class="btn-outline" style="background:transparent; color:#fff;">Skip</button>
+                <button id="feedback-submit" class="btn-gold">Submit Feedback</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    // Star selection logic
+    const stars = modal.querySelectorAll('#feedback-stars span');
+    let selectedRating = 5; // default
+    function renderStars(r) {
+        stars.forEach(s => {
+            const v = parseInt(s.getAttribute('data-value'), 10);
+            s.textContent = v <= r ? '★' : '☆';
+        });
+    }
+    renderStars(selectedRating);
+
+    stars.forEach(s => {
+        s.addEventListener('click', () => {
+            selectedRating = parseInt(s.getAttribute('data-value'), 10);
+            renderStars(selectedRating);
+        });
+        s.addEventListener('mouseover', () => {
+            const v = parseInt(s.getAttribute('data-value'), 10);
+            renderStars(v);
+        });
+        s.addEventListener('mouseout', () => renderStars(selectedRating));
+    });
+
+    // Buttons
+    modal.querySelector('#feedback-skip').addEventListener('click', () => {
+        modal.remove();
+        // Redirect to orders page
+        window.location.href = 'orders.html';
+    });
+
+    modal.querySelector('#feedback-submit').addEventListener('click', async () => {
+        const msg = document.getElementById('feedback-message').value.trim();
+        // Submit via API
+        try {
+            window.utils.showLoader();
+            const res = await window.utils.apiCall('/feedback', 'POST', {
+                orderId: orderId,
+                rating: selectedRating,
+                message: msg,
+                phone: userPhone
+            });
+            window.utils.hideLoader();
+            window.utils.showNotification(res.message || 'Thanks for your feedback!', 'success');
+            modal.remove();
+            // Redirect to orders page
+            setTimeout(() => { window.location.href = 'orders.html'; }, 800);
+        } catch (err) {
+            window.utils.hideLoader();
+            console.error('Feedback submit error:', err);
+            window.utils.showNotification(err.message || 'Failed to submit feedback', 'error');
+        }
+    });
+}
+
 // Display order summary
 function displayOrderSummary() {
     const cart = window.utils.getCart();
@@ -246,10 +336,8 @@ async function placeOrder() {
         
         window.utils.showNotification(successMessage, 'success');
         
-        // Redirect to orders page
-        setTimeout(() => {
-            window.location.href = 'orders.html';
-        }, 2000);
+        // Show feedback modal before redirecting to orders
+        showFeedbackModal(response.orderId, user.phone);
         
     } catch (error) {
         window.utils.hideLoader();

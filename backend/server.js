@@ -359,6 +359,54 @@ app.get('/api/contacts', async (req, res) => {
     }
 });
 
+// ===================================
+// FEEDBACK ROUTES
+// -----------------------------------
+// Store and retrieve customer feedback linked to orders
+// ===================================
+
+// POST /api/feedback - save feedback for an order
+app.post('/api/feedback', async (req, res) => {
+    const { orderId, rating, message, phone } = req.body;
+
+    if (!orderId || !rating) {
+        return res.status(400).json({ success: false, message: 'orderId and rating are required' });
+    }
+
+    const numericRating = parseInt(rating, 10);
+    if (isNaN(numericRating) || numericRating < 1 || numericRating > 5) {
+        return res.status(400).json({ success: false, message: 'Rating must be an integer between 1 and 5' });
+    }
+
+    try {
+        await pool.query(
+            'INSERT INTO feedbacks (order_id, user_phone, rating, message) VALUES ($1, $2, $3, $4)',
+            [orderId, phone || null, numericRating, message || null]
+        );
+
+        res.status(201).json({ success: true, message: 'Thank you for your feedback' });
+    } catch (error) {
+        console.error('Feedback save error:', error);
+        res.status(500).json({ success: false, message: 'Failed to save feedback' });
+    }
+});
+
+// GET /api/feedbacks - retrieve all feedbacks (admin)
+app.get('/api/feedbacks', async (req, res) => {
+    try {
+        const result = await pool.query(
+            `SELECT id, order_id, user_phone, rating, message, TO_CHAR(created_at, 'YYYY-MM-DD HH24:MI:SS') as created_at
+             FROM feedbacks
+             ORDER BY created_at DESC`
+        );
+
+        res.json({ success: true, feedbacks: result.rows });
+    } catch (error) {
+        console.error('Get feedbacks error:', error);
+        res.status(500).json({ success: false, message: 'Failed to fetch feedbacks' });
+    }
+});
+
 // 6. GET USER'S ORDER HISTORY (UPDATED WITH ADDRESS)
 app.get('/api/orders/:phone', async (req, res) => {
     const { phone } = req.params;
@@ -500,6 +548,8 @@ app.get('/', (req, res) => {
             orderHistory: 'GET /api/orders/:phone',
             contact: 'POST /api/contact',
             contactsList: 'GET /api/contacts',
+            feedback: 'POST /api/feedback',
+            feedbacksList: 'GET /api/feedbacks',
             health: 'GET /api/health'
         }
     });
