@@ -187,3 +187,8 @@ If you want, I can add a `DO_NOT_DEPLOY.md` file automatically and/or rename the
 ---
 
 If anything above is unclear or you want me to make repository edits (create `DO_NOT_DEPLOY.md` or rename the deployment files), tell me which option and I will apply the change.
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
