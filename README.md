@@ -6,11 +6,6 @@ A premium, full-stack e-commerce platform for farm-to-table organic produce with
 ![Node.js](https://img.shields.io/badge/node-%3E%3D%2014.0.0-brightgreen)
 ![Express](https://img.shields.io/badge/express-4.18.2-blue)
 
-## 🚀 Live Demo
-
-- **Frontend**: [Your Vercel URL here]
-- **Backend**: [Your Backend URL here]
-
 ## ✨ Features
 
 ### User Features
@@ -103,30 +98,92 @@ OrganicFarmStore/
 - **CORS** - Cross-origin resource sharing
 - **JSON File System** - Database storage
 
-## 📦 Installation & Local Setup
+## 📦 Installation & Local Setup (Run locally — do NOT deploy)
+
+### Why this section exists
+This repository contains a full-stack demo. If you want to inspect or test it locally, follow the instructions below. Do NOT deploy this repository to a public host unless you intentionally want it live. See the next section for steps to prevent accidental deployments.
 
 ### Prerequisites
-- Node.js (v14 or higher)
+- Node.js (v18 or higher is recommended)
 - npm (comes with Node.js)
 - Git
 
-### Step 1: Clone Repository
+### Step 1 — Clone the repository
 ```bash
 git clone https://github.com/YOUR_USERNAME/OrganicFarmStore.git
 cd OrganicFarmStore
 ```
 
-### Step 2: Install Backend Dependencies
+### Step 2 — Install and start the backend
+1. Install backend dependencies:
 ```bash
 cd backend
 npm install
 ```
 
-### Step 3: Start Backend Server
+2. Start the backend server:
 ```bash
 npm start
-# Server runs on http://localhost:3000
+# This runs `node server.js` and by default listens on http://localhost:3000
 ```
 
-### Step 4: Open Frontend
-Open `frontend/HTML/index.html` in your browser, or use Live Server extension in VS Code.
+Leave this terminal open — the API must be running for the frontend to interact with it.
+
+### Step 3 — View the frontend (pick one)
+Option A — Open the HTML file directly (quickest):
+
+```bash
+# On macOS: this opens the default browser with the page
+open frontend/HTML/index.html
+```
+
+Notes: opening the file directly works for many static pages. If the frontend makes API calls to the backend (http://localhost:3000), make sure the backend is running. If you see CORS or network errors, use Option B or C.
+
+Option B — Serve the frontend with a lightweight static server (recommended):
+
+```bash
+# From project root
+npx serve frontend/HTML -l 5500
+# or
+cd frontend/HTML && python3 -m http.server 5500
+# Open http://localhost:5500
+```
+
+Option C — Use the VS Code "Live Server" extension: right-click `frontend/HTML/index.html` and choose "Open with Live Server".
+
+### Quick verification
+- Backend running: visit http://localhost:3000 (or check console where you started it)
+- Frontend served: visit http://localhost:5500 (if using a static server) or opened file URL
+
+### Troubleshooting
+- If the frontend cannot reach the backend, check the browser console for CORS or network errors. The backend depends on the CORS middleware — ensure it's running on port 3000.
+- If ports are in use, pick different ones and update the URLs accordingly.
+
+---
+
+## ❗ Important — Do NOT deploy this repository (how to prevent accidental deployment)
+
+If you explicitly want to keep this repo private/local and avoid accidental deployment to services like Vercel or Render, follow one or more of the safe options below.
+
+1. Rename or remove deployment config files (non-destructive):
+
+```bash
+# Make the files inert so hosting services won't auto-detect them
+# from the project root
+mv vercel.json vercel.json.DO_NOT_DEPLOY || true
+mv render.yaml render.yaml.DO_NOT_DEPLOY || true
+```
+
+2. Unlink the project from hosting providers:
+- If you previously connected this repo in Vercel/Render, remove/unlink the project in the provider's dashboard (recommended).
+- For Vercel CLI: run `vercel unlink` in the project directory (if you previously linked it).
+
+3. Add a clear marker (optional): create a file named `DO_NOT_DEPLOY.md` with a short explanation so collaborators see it immediately.
+
+4. Avoid pushing to remote branches that are connected to automatic deployments. Work on a local branch or a private fork.
+
+If you want, I can add a `DO_NOT_DEPLOY.md` file automatically and/or rename the existing `vercel.json` and `render.yaml` in this repo — tell me which option you prefer.
+
+---
+
+If anything above is unclear or you want me to make repository edits (create `DO_NOT_DEPLOY.md` or rename the deployment files), tell me which option and I will apply the change.
