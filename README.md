@@ -163,31 +163,6 @@ Option C — Use the VS Code "Live Server" extension: right-click `frontend/HTML
 
 ## ❗ Important — Do NOT deploy this repository (how to prevent accidental deployment)
 
-If you explicitly want to keep this repo private/local and avoid accidental deployment to services like Vercel or Render, follow one or more of the safe options below.
-
-1. Rename or remove deployment config files (non-destructive):
-
-```bash
-# Make the files inert so hosting services won't auto-detect them
-# from the project root
-mv vercel.json vercel.json.DO_NOT_DEPLOY || true
-mv render.yaml render.yaml.DO_NOT_DEPLOY || true
-```
-
-2. Unlink the project from hosting providers:
-- If you previously connected this repo in Vercel/Render, remove/unlink the project in the provider's dashboard (recommended).
-- For Vercel CLI: run `vercel unlink` in the project directory (if you previously linked it).
-
-3. Add a clear marker (optional): create a file named `DO_NOT_DEPLOY.md` with a short explanation so collaborators see it immediately.
-
-4. Avoid pushing to remote branches that are connected to automatic deployments. Work on a local branch or a private fork.
-
-If you want, I can add a `DO_NOT_DEPLOY.md` file automatically and/or rename the existing `vercel.json` and `render.yaml` in this repo — tell me which option you prefer.
-
----
-
-If anything above is unclear or you want me to make repository edits (create `DO_NOT_DEPLOY.md` or rename the deployment files), tell me which option and I will apply the change.
-
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
