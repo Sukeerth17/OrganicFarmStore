@@ -16,12 +16,12 @@ async function run() {
     process.exit(1);
   }
 
-  // Support SSL connections (e.g., managed Postgres services)
+  // Decide whether to use SSL. If the connection string points to localhost, disable SSL.
+  const useSSL = connectionString && !/localhost|127\.0\.0\.1/.test(connectionString);
+
   const client = new Client({
     connectionString,
-    ssl: {
-      rejectUnauthorized: false
-    }
+    ssl: useSSL ? { rejectUnauthorized: false } : false
   });
 
   try {

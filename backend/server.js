@@ -7,6 +7,7 @@ const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 require('dotenv').config();
+const { exec } = require('child_process');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,18 +16,28 @@ const PORT = process.env.PORT || 3000;
 // DATABASE CONNECTION
 // ===================================
 
+// Detect whether to use SSL. Many managed Postgres providers (Heroku, etc.)
+// require SSL, but local databases (localhost/127.0.0.1) generally do not.
+const connectionString = process.env.DATABASE_URL;
+const useSSL = connectionString && !/localhost|127\.0\.0\.1/.test(connectionString);
+
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
+    connectionString,
+    // If useSSL is false, pass false so the driver doesn't attempt TLS.
+    ssl: useSSL ? { rejectUnauthorized: false } : false
 });
 
 // Test database connection
 pool.query('SELECT NOW()', (err, res) => {
     if (err) {
-        console.error('❌ Database connection failed:', err.message);
-        console.error('DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
+        console.error('❌ Database connection failed:');
+        console.error(err && err.stack ? err.stack : err);
+        console.error('DATABASE_URL:', connectionString ? 'Set' : 'Not set');
+        if (connectionString && !useSSL) {
+            console.error('Note: SSL disabled because DATABASE_URL appears to be local.');
+        } else if (connectionString && useSSL) {
+            console.error('Note: SSL enabled for remote connection (rejectUnauthorized=false).');
+        }
     } else {
         console.log('✅ Database connected successfully!');
         console.log('Database time:', res.rows[0].now);
@@ -591,6 +602,22 @@ app.listen(PORT, () => {
 ║                                            ║
 ╚════════════════════════════════════════════╝
     `);
+
+    // Attempt to open the default browser to the home page on server start.
+    // Only do this when not running in CI/test and when OPEN_BROWSER is not set to 'false'.
+    try {
+        const openBrowser = process.env.OPEN_BROWSER !== 'false' && process.env.NODE_ENV !== 'test';
+        if (openBrowser) {
+            const url = `http://localhost:${PORT}`;
+            // Cross-platform opener: use the platform's default command
+            const cmd = process.platform === 'darwin' ? `open "${url}"` : process.platform === 'win32' ? `start "" "${url}"` : `xdg-open "${url}"`;
+            exec(cmd, (err) => {
+                if (err) console.error('Failed to open browser automatically:', err.message || err);
+            });
+        }
+    } catch (err) {
+        console.error('Error while attempting to open browser:', err && err.stack ? err.stack : err);
+    }
 });
 
 // Graceful shutdown
